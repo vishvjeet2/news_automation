@@ -10,6 +10,7 @@ class News extends Model
         'category_id',
         'template_id',
         'description',
+        'heading',
         'news_date',
         'place',
         'news_type',

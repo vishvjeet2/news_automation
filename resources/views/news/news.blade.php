@@ -59,14 +59,14 @@ button:hover { background: #0056b3; }
 <select id="newscatogary" name="category_id" required>
     <option value="">-- Select Template --</option>
     @foreach ($categories as $category) 
-        <option value=" {{ $category->id }} "> {{ $category->name }} </option>
+        <option value="{{ $category->id }}"> {{ $category->name }} </option>
     @endforeach
 </select>
 <label>Select Template</label>
 <select id="templateType" name="template_type" required>
     <option value="">-- Select Template --</option>
     @foreach ($templetName as $name) 
-        <option value=" {{ $name->id }} "> {{ $name->name }} </option>
+        <option value="{{ $name->id }}"> {{ $name->name }} </option>
     @endforeach
     
 </select>
@@ -108,7 +108,7 @@ document.getElementById("templateType").addEventListener("change", function(){
     let type = this.value;
     let fields = commonFields();
 
-    if(type === "image"){
+    if(type === "2"){
         fields += `
             <label>Upload Image</label>
             <input type="file" name="image">
@@ -116,7 +116,7 @@ document.getElementById("templateType").addEventListener("change", function(){
         `;
     }
 
-    if(type === "video"){
+    if(type === "4"){
         fields += `
             <label>Upload Video</label>
             <input type="file" name="video">

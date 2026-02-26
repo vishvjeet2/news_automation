@@ -25,7 +25,7 @@
         .container {
             position: relative;
             width: 215mm;
-            height: 255mm;
+            height: 265mm;
             overflow: hidden;
         }
 
@@ -95,7 +95,6 @@
         .photo img {
             width: 100%;
             height: 100%;
-            border: 4px solid white;
             object-fit: contain;   /* ✅ shows full image */
             background: transparent;   /* ✅ transparent */
         }

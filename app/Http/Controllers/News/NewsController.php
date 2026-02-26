@@ -10,7 +10,10 @@ use Illuminate\Http\Request;
 use Spatie\Browsershot\Browsershot;
 use FluentVox\Speech;
 use App\Models\Category;
+use App\Models\News;
+use App\Models\NewsMedia;
 use App\Models\Template;
+
 
 class NewsController extends Controller
 {
@@ -21,15 +24,16 @@ class NewsController extends Controller
         $type = $request->template_type;
 
         // redirecting as per selected news type
-        if ($type == 'image') {
+        if ($type == '2') {
             
             return $this->generateNewswithImage($request);
         }
     
-        if ($type == 'video') {
+        if ($type == '4') {
+
             return $this->createvideo($request);
         }
-        if ($type == 'noimage') {
+        if ($type == '3') {
             
             return $this->generateNewstext($request);
         }
@@ -44,6 +48,15 @@ class NewsController extends Controller
             'city' => 'required|string|max:100',
             'video' => 'required|file|mimes:mp4,mov,avi,webm|max:20480',
         ]);
+
+        $heading = $request->heading;
+        $data = $request->description;
+        $location = $request->city;
+        $hashtag = $request->hashtag;
+        $catogry_id = $request->category_id;    // carogary 
+        $catogry_name = Category::where('id', $catogry_id)->value('name'); // name of the catagory
+
+        
     
         // 1️⃣ generate image
         $imagePath = $this->generateNewsvideo($request);
@@ -57,6 +70,7 @@ class NewsController extends Controller
     
         // 2️⃣ store uploaded video
         $videoFile = $request->file('video')->store('temp_videos', 'public');
+        $extension = $request->file('video')->extension();
     
         $videoPath = storage_path('app/public/' . $videoFile);
         $outputPath = storage_path('app/public/videos/output.mp4');
@@ -95,6 +109,23 @@ class NewsController extends Controller
         if (!$process->isSuccessful()) {
             dd($process->getErrorOutput());
         }
+
+        $news = News::create([
+            'category_id' => $catogry_id,
+            'template_id' => $request->template_type,
+            'description' => $data,
+            'heading' => $heading,
+            'hashtag' => $hashtag,
+            'place' => $location,
+            'news_type' => $catogry_name,
+        ]);  
+        
+        NewsMedia::create([
+            'news_id' => $news->id,
+            'file_path' => $outputPath,
+            'file_type' => $extension,
+            'is_primary' => 1
+        ]);
     
         return view('news.download', [
             'image' => 'storage/videos/' . basename($outputPath)
@@ -104,8 +135,8 @@ class NewsController extends Controller
     
     public function generateNewswithImage(Request $request){
         $request->validate([
-            'heading' => 'required|string|max:600',
-            'description' => 'required|string',
+            'heading' => 'required|string|max:60',
+            'description' => 'required|string|max:300',
             'city' => 'required|string|max:100',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
@@ -114,6 +145,10 @@ class NewsController extends Controller
         $data = $request->description;
         $location = $request->city;
         $hashtag = $request->hashtag;
+        $catogry_id = $request->category_id;    // carogary 
+        $catogry_name = Category::where('id', $catogry_id)->value('name'); // name of the catagory
+
+        $extension = $request->file('image')->extension();
 
         // store uploaded image
         $photoPath = null;
@@ -136,11 +171,28 @@ class NewsController extends Controller
 
         $imagePath = $directory . '/news_' . time() . '.jpeg';
 
-
         Browsershot::html($html)
             ->windowSize(800, 1000)
             ->save($imagePath);
-
+        
+         
+        $news = News::create([
+            'category_id' => $catogry_id,
+            'template_id' => $request->template_type,
+            'description' => $data,
+            'heading' => $heading,
+            'hashtag' => $hashtag,
+            'place' => $location,
+            'news_type' => $catogry_name,
+        ]);  
+        
+        NewsMedia::create([
+            'news_id' => $news->id,
+            'file_path' => $imagePath,
+            'file_type' => $extension,
+            'is_primary' => 1
+        ]);
+        
         return view('news.download', [
             'image' => 'storage/images/' . basename($imagePath)
         ]);
