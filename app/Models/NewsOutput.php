@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class NewsOutput extends Model
 {
+    // this table is for the final output
     protected $table = 'news_outputs';
 
     protected $fillable = [

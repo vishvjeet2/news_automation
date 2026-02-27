@@ -23,7 +23,7 @@
 
         <form id="mediaForm"
               method="POST"
-              action="{{ route('news.create') }}"
+              action="{{ route('posts.generate') }}"
               enctype="multipart/form-data"
               class="space-y-6">
 

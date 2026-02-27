@@ -30,7 +30,7 @@
 
 <br><br>
 
-<a href="{{ route('news.create') }}">← Create Another</a>
+<a href="{{ route('dashboard') }}">← Create Another</a>
 
 </body>
 </html>

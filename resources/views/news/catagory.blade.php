@@ -4,6 +4,7 @@
 
 @section('content')
 
+
 <div class="max-w-xl mx-auto">
 
     <!-- Back Button -->
@@ -20,6 +21,11 @@
         <h2 class="text-xl font-semibold text-black mb-6">
             Add Category
         </h2>
+        @if(session('error_msg'))
+            <div class="text-red-600 text-sm mt-2">
+                {{ session('error_msg') ?? '' }}
+            </div>
+        @endif
 
         <form action="{{ route('category.store') }}"
               method="POST"

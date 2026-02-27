@@ -32,7 +32,9 @@ Route::middleware('auth.check')->group(function () {
 
     Route::get('/posts/{id}/download', [PostController::class, 'download'])->name('posts.download');
 
-    Route::get('/categories', function () {return view('news.test'); })->name('categories.index');
+    Route::get('/categories', function () {return view('news.catagory'); })->name('view.category.store');
+
+    Route::post('/categories', [NewsController::class, 'insertnewscatogarytype'])->name('category.store');
 
     Route::get('/templates', function () { return view('news.templet');})->name('templates.index');
 
@@ -40,58 +42,7 @@ Route::middleware('auth.check')->group(function () {
 
 
 
-//////////////////////////////////////////////////////////
 
-
-// Route::post('/createnewstext', [NewsController::class, 'generateNewstext']);
-
-// Route::post('/createnewsvideo', [NewsController::class, 'generateNewsvideo']);
-
-///////////////////////////////////////////////////////////
-
-
-
-//Route::get('/tts', [NewsController::class, 'hindiTTS']);
-
-Route::get('/newstype', [NewsController::class, 'fetch_data']);
-
-Route::post('/newstype', [NewsController::class, 'newstype'])->name('news.create');
-
-
-
-////////////////////////////////////////////////////////////////
-
-// Route::get('/newstyp', function(){
-//     return view('randomimage');
-// });
-
-///////////////////////////////////////////////////////////////
-
-
-
-///////////////////////////////////////////////////////////////
-// main automation routs
-
-Route::get('/testimage', [NewsController::class, 'createimage']);
-
-Route::get('/testvideo', [NewsController::class, 'createvideo']);
-
-Route::get('/newsimage', [NewsController::class, 'createImagenews']);
-
-Route::get('/newspdf', [NewsController::class, 'generateNewsImage']);
-
-/////////////////////////////////////////////////////////////////
-
-
-
-/* GET route to show form */
-// Route::get('/category', function () {
-//     return view('news.test');
-// });
-
-
-/* POST route to handle form */
-Route::post('/category', [NewsController::class, 'insertnewstype'])->name('category.store');
 
 
 // Route::get('/templates', function(){

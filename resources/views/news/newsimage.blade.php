@@ -25,7 +25,7 @@
         .container {
             position: relative;
             width: 215mm;
-            height: 265mm;
+            height: 260mm;
             overflow: hidden;
         }
 

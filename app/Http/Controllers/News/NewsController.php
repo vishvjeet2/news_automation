@@ -12,7 +12,10 @@ use FluentVox\Speech;
 use App\Models\Category;
 use App\Models\News;
 use App\Models\NewsMedia;
+use App\Models\NewsOutput;
 use App\Models\Template;
+use Carbon\Traits\Cast;
+
 
 
 class NewsController extends Controller
@@ -110,8 +113,11 @@ class NewsController extends Controller
             dd($process->getErrorOutput());
         }
 
+        $user_id = session('user_id');
+
         $news = News::create([
             'category_id' => $catogry_id,
+            'user_id' => $user_id,
             'template_id' => $request->template_type,
             'description' => $data,
             'heading' => $heading,
@@ -175,9 +181,11 @@ class NewsController extends Controller
             ->windowSize(800, 1000)
             ->save($imagePath);
         
-         
+        $user_id = session('user_id');
+
         $news = News::create([
             'category_id' => $catogry_id,
+            'user_id' => $user_id,
             'template_id' => $request->template_type,
             'description' => $data,
             'heading' => $heading,
@@ -186,10 +194,10 @@ class NewsController extends Controller
             'news_type' => $catogry_name,
         ]);  
         
-        NewsMedia::create([
+        // 
+        NewsOutput::create([
             'news_id' => $news->id,
             'file_path' => $imagePath,
-            'file_type' => $extension,
             'is_primary' => 1
         ]);
         
@@ -216,10 +224,12 @@ class NewsController extends Controller
         }
         
 
-        $heading = $request->heading;
+        $$heading = $request->heading;
         $data = $request->description;
         $location = $request->city;
         $hashtag = $request->hashtag;
+        $catogry_id = $request->category_id;    // carogary 
+        $catogry_name = Category::where('id', $catogry_id)->value('name'); // name of the catagory
 
 
         $template = storage_path('app/private/news_frame.jpeg');
@@ -240,6 +250,17 @@ class NewsController extends Controller
         Browsershot::html($html)
             ->windowSize(800, 1000)
             ->save($imagePath);
+
+        News::create([
+            'category_id' => $catogry_id,
+            'user_id' => $user_id,
+            'template_id' => $request->template_type,
+            'description' => $data,
+            'heading' => $heading,
+            'hashtag' => $hashtag,
+            'place' => $location,
+            'news_type' => $catogry_name,
+        ]); 
 
         return view('news.download', [
             'image' => 'storage/images/' . basename($imagePath)
@@ -301,6 +322,28 @@ class NewsController extends Controller
         $templetName = Template::all(); // templet name
 
         return view('news.news', compact('categories', 'templetName'));
+    }
+    
+    public function insertnewscatogarytype(Request $request){
+        $request->validate([
+            'name' => 'required|string',
+            'slug' => 'required|string'
+        ]);
+
+        $exists = Category::where('name', $request->name)
+                    ->orWhere('slug', $request->slug)
+                    ->exists();
+
+        if ($exists) {
+            return back()->with('error_msg', 'This category already exists');
+        }
+
+        Category::create([
+            'name' => $request->name,
+            'slug' => $request->slug
+        ]);
+
+        return back()->with('success', 'Category added successfully');
     }
     
 }

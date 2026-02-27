@@ -39,7 +39,7 @@
                     Create Post
                 </a>
 
-                <a href="{{ route('categories.index') }}"
+                <a href="{{ route('view.category.store') }}"
                     class="block px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition">
                     Categories
                 </a>

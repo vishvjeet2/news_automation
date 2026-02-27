@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class NewsMedia extends Model
 {
+    // this table is for user uploded images/ videos
     protected $table = 'news_media';
 
     protected $fillable = [
