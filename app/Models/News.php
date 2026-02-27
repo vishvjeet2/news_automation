@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class News extends Model
 {
     protected $fillable = [
+        'user_id',
         'category_id',
         'template_id',
         'description',
+        'heading',
         'news_date',
         'place',
         'news_type',
@@ -41,4 +43,9 @@ class News extends Model
     {
         return $this->hasMany(NewsOutput::class);
     }
+
+    public function latestOutput()
+{
+    return $this->hasOne(NewsOutput::class)->latestOfMany();
+}
 }

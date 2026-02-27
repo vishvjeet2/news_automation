@@ -16,10 +16,12 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
             $table->foreignId('template_id')->constrained('templates')->cascadeOnDelete();
+            $table->text('heading');
             $table->text('description');
+            $table->text('hashtag');
             $table->date('news_date');
             $table->string('place');
-            $table->enum('news_type',['image','video']);
+            $table->enum('news_type',['image','video','text']);
             $table->enum('status',['draft','processed'])->default('draft');
             $table->string('audio_path')->nullable();
             $table->timestamps();
