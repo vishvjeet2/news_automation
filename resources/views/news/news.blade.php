@@ -1,108 +1,122 @@
+@extends('layouts.app')
 
+@section('title', 'Create Post')
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Create Media</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+@section('content')
 
-<style>
-   
-@import url('https://fonts.googleapis.com/css2?family=Anek+Devanagari:wght@500&family=Khand:wght@500;600;700&family=Noto+Sans+Devanagari:wght@100..900&display=swap');
+<div class="max-w-2xl mx-auto">
 
-body {
-    font-family: Arial, sans-serif;
-    background: #f4f6f8;
-    padding: 40px;
-}
-.container {
-    max-width: 520px;
-    margin: auto;
-    background: #fff;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-label { font-weight: bold; margin-top: 15px; display: block; }
+    <!-- Back Button -->
+    <div class="mb-6">
+        <a href="{{ route('dashboard') }}"
+           class="inline-flex items-center text-sm text-gray-600 hover:text-black transition">
+            ← Back to Dashboard
+        </a>
+    </div>
 
-input, select, button {
-    width: 100%;
-    padding: 10px;
-    margin-top: 6px;
-}
+    <!-- Card -->
+    <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-8">
 
-input.error, select.error {
-    border: 2px solid red;
-}
+        <h2 class="text-xl font-semibold text-black mb-6">
+            Create Media
+        </h2>
 
-button {
-    background: #007bff;
-    color: #fff;
-    border: none;
-    margin-top: 20px;
-    cursor: pointer;
-}
-button:hover { background: #0056b3; }
-</style>
-</head>
-<body>
+        <form id="mediaForm"
+              method="POST"
+              action="{{ route('news.create') }}"
+              enctype="multipart/form-data"
+              class="space-y-6">
 
-<div class="container">
+            @csrf
 
-<h2>Create Media</h2>
+            <!-- Category -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Select News Category
+                </label>
 
-<form id="mediaForm" method="POST" action="{{ route('news.create') }}" enctype="multipart/form-data">
-@csrf
+                <select id="newscatogary"
+                        name="category_id"
+                        required
+                        class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-black focus:ring-1 focus:ring-black">
+                    <option value="">-- Select Category --</option>
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->id }}">
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
 
-<label>Select News catagory</label>
-<select id="newscatogary" name="category_id" required>
-    <option value="">-- Select Template --</option>
-    @foreach ($categories as $category) 
-        <option value="{{ $category->id }}"> {{ $category->name }} </option>
-    @endforeach
-</select>
-<label>Select Template</label>
-<select id="templateType" name="template_type" required>
-    <option value="">-- Select Template --</option>
-    @foreach ($templetName as $name) 
-        <option value="{{ $name->id }}"> {{ $name->name }} </option>
-    @endforeach
-    
-</select>
+            <!-- Template -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Select Template
+                </label>
 
-<div id="dynamicFields"></div>
+                <select id="templateType"
+                        name="template_type"
+                        required
+                        class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-black focus:ring-1 focus:ring-black">
+                    <option value="">-- Select Template --</option>
+                    @foreach ($templetName as $name)
+                        <option value="{{ $name->id }}">
+                            {{ $name->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
 
-<button type="submit">Submit</button>
+            <!-- Dynamic Fields -->
+            <div id="dynamicFields" class="space-y-5"></div>
 
-</form>
+            <!-- Submit -->
+            <button type="submit"
+                    class="w-full bg-black text-white py-3 rounded-md hover:bg-gray-800 transition shadow-sm">
+                Generate
+            </button>
+
+        </form>
+
+    </div>
 
 </div>
 
+<!-- Script Same As Before -->
 <script>
 
-// create common fields
 function commonFields(){
     return `
-        <label>Heading</label>
-        <input type="text" name="heading">
-        <div class="error-text" id="heading_error"></div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Heading</label>
+            <input type="text" name="heading"
+                class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-black focus:ring-1 focus:ring-black">
+            <div class="text-sm text-red-500 mt-1" id="heading_error"></div>
+        </div>
 
-        <label>Description</label>
-        <input type="text" name="description">
-        <div class="error-text" id="description_error"></div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+            <input type="text" name="description"
+                class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-black focus:ring-1 focus:ring-black">
+            <div class="text-sm text-red-500 mt-1" id="description_error"></div>
+        </div>
 
-        <label>City Name</label>
-        <input type="text" name="city">
-        <div class="error-text" id="city_error"></div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">City Name</label>
+            <input type="text" name="city"
+                class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-black focus:ring-1 focus:ring-black">
+            <div class="text-sm text-red-500 mt-1" id="city_error"></div>
+        </div>
 
-        <label>Hashtag</label>
-        <input type="text" name="hashtag">
-        <div class="error-text" id="hashtag_error"></div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Hashtag</label>
+            <input type="text" name="hashtag"
+                class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-black focus:ring-1 focus:ring-black">
+            <div class="text-sm text-red-500 mt-1" id="hashtag_error"></div>
+        </div>
     `;
 }
 
-// load dynamic fields
 document.getElementById("templateType").addEventListener("change", function(){
 
     let type = this.value;
@@ -110,27 +124,29 @@ document.getElementById("templateType").addEventListener("change", function(){
 
     if(type === "2"){
         fields += `
-            <label>Upload Image</label>
-            <input type="file" name="image">
-            <div class="error-text" id="image_error"></div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Upload Image</label>
+                <input type="file" name="image"
+                    class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-black focus:ring-1 focus:ring-black">
+                <div class="text-sm text-red-500 mt-1" id="image_error"></div>
+            </div>
         `;
     }
 
     if(type === "4"){
         fields += `
-            <label>Upload Video</label>
-            <input type="file" name="video">
-            <div class="error-text" id="video_error"></div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Upload Video</label>
+                <input type="file" name="video"
+                    class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-black focus:ring-1 focus:ring-black">
+                <div class="text-sm text-red-500 mt-1" id="video_error"></div>
+            </div>
         `;
     }
 
     document.getElementById("dynamicFields").innerHTML = fields;
 });
 
-
-
-
 </script>
 
-</body>
-</html>
+@endsection
