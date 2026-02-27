@@ -244,8 +244,7 @@ class NewsController extends Controller
         return $savePath;   // ✅ return real file path
     }
 
-    public function fetch_data()
-    {
+    public function fetch_data(){
         $categories = Category::all();   // fetch categories
         $templetName = Template::all(); // templet name
 
