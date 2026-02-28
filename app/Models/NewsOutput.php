@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class NewsOutput extends Model
 {
+    // this table is for the final output
     protected $table = 'news_outputs';
 
     protected $fillable = [
         'news_id',
+        'user_id',
         'output_type',
         'file_path'
     ];
