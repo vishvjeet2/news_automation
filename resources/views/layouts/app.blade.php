@@ -44,10 +44,10 @@
                     Categories
                 </a>
 
-                <a href="{{ route('templates.index') }}"
+                {{-- <a href="{{ route('templates.index') }}"
                     class="block px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition">
                     Templates
-                </a>
+                </a> --}}
 
             </nav>
 

@@ -17,6 +17,7 @@ class DashboardController extends Controller
             ->paginate(10);
         
         
+        
 
         $stats = [
             'total' => News::where('user_id', $userId)->count(),

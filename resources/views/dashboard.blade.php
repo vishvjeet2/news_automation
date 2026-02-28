@@ -56,7 +56,7 @@
         @foreach($posts as $post)
             <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
                 <td class="p-4">{{ $post->heading }}</td>
-                <td class="p-4 capitalize">{{ $post->news_type }}</td>
+                <td class="p-4 capitalize">{{ $post->latestOutput->output_type ?? 'N/A' }}</td>
                 <td class="p-4">{{ $post->category->name ?? '-' }}</td>
                 <td class="p-4">
                     <button

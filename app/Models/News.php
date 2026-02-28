@@ -45,7 +45,7 @@ class News extends Model
     }
 
     public function latestOutput()
-{
-    return $this->hasOne(NewsOutput::class)->latestOfMany();    
-}
+    {
+        return $this->hasOne(NewsOutput::class)->latestOfMany();    
+    }
 }

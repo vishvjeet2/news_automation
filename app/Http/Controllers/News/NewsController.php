@@ -253,62 +253,71 @@ class NewsController extends Controller
 
 
 
-    public function generateNewstext(Request $request){
+    public function generateNewstext(Request $request)
+    {
         if (empty($request->description)) {
             $request->validate([
                 'heading' => 'required|string|max:355',
                 'city' => 'required|string|max:100',
             ]);
-        }
-        else{
+        } else {
             $request->validate([
                 'heading' => 'required|string|max:70',
                 'description' => 'nullable|string|max:400',
                 'city' => 'required|string|max:100',
             ]);
         }
-        
-
-        $$heading = $request->heading;
+    
+        $heading = $request->heading;
         $data = $request->description;
         $location = $request->city;
         $hashtag = $request->hashtag;
-        $catogry_id = $request->category_id;    // carogary 
-        $catogry_name = Category::where('id', $catogry_id)->value('name'); // name of the catagory
-
-
-        $template = storage_path('app/private/news_frame.jpeg');
-
-        // dd($photoPath);
+        $catogry_id = $request->category_id;
+    
+        $catogry_name = Category::where('id', $catogry_id)->value('name');
+    
+        $template = storage_path('app/public/templates/news_frame.jpeg');
+    
         $html = view('news.newstext', compact('data','heading','template','location','hashtag'))->render();
-
-
+    
+        // ✅ Storage directory
         $directory = storage_path('app/public/images');
-
+    
         if (!file_exists($directory)) {
             mkdir($directory, 0755, true);
         }
-
-        $imagePath = $directory . '/news_' . time() . '.jpeg';
-
-
+    
+        // ✅ Create filename
+        $filename = 'news_' . time() . '.jpeg';
+        $imagePath = $directory . '/' . $filename;
+    
+        // ✅ Generate image
         Browsershot::html($html)
             ->windowSize(800, 1000)
             ->save($imagePath);
-
-        News::create([
+    
+        // ✅ Save news
+        $news = News::create([
             'category_id' => $catogry_id,
-            'user_id' => $user_id,
+            'user_id' => session('user_id'),
             'template_id' => $request->template_type,
             'description' => $data,
             'heading' => $heading,
             'hashtag' => $hashtag,
             'place' => $location,
             'news_type' => $catogry_name,
-        ]); 
-
+        ]);
+    
+        // ✅ Store PUBLIC path (IMPORTANT)
+        NewsOutput::create([
+            'user_id' => session('user_id'),
+            'news_id' => $news->id,
+            'output_type' => 'image',
+            'file_path' => 'images/' . $filename
+        ]);
+    
         return view('news.download', [
-            'image' => 'storage/images/' . basename($imagePath)
+            'image' => 'storage/images/' . $filename
         ]);
     }
 
@@ -321,7 +330,7 @@ class NewsController extends Controller
         $hashtag = $request->hashtag;
 
 
-        $template = storage_path('app/private/news_frame.jpeg');
+        $template = storage_path('app/public/templates/news_frame.jpeg');
 
         // dd($photoPath);
         $html = view('news.newsvideo', compact('data','heading','template','location','hashtag'))->render();
