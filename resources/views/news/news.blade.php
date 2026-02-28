@@ -122,7 +122,7 @@ document.getElementById("templateType").addEventListener("change", function(){
     let type = this.value;
     let fields = commonFields();
 
-    if(type === "2"){
+    if(type === "1"){
         fields += `
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Upload Image</label>
@@ -133,7 +133,7 @@ document.getElementById("templateType").addEventListener("change", function(){
         `;
     }
 
-    if(type === "4"){
+    if(type === "2"){
         fields += `
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Upload Video</label>

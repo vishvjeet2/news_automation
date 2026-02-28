@@ -13,7 +13,6 @@ class NewsMedia extends Model
         'news_id',
         'file_path',
         'file_type',
-        'is_primary'
     ];
 
     public function news()

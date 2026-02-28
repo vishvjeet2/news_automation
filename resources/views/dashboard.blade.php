@@ -59,16 +59,20 @@
                 <td class="p-4 capitalize">{{ $post->news_type }}</td>
                 <td class="p-4">{{ $post->category->name ?? '-' }}</td>
                 <td class="p-4">
-                    <span class="px-3 py-1 text-sm rounded-full border
-                        {{ $post->status === 'processed' ? 'bg-gray-200 text-black border-gray-300' : 'bg-gray-100 text-gray-600 border-gray-200' }}">
-                        {{ ucfirst($post->status) }}
-                    </span>
+                    <button
+                        onclick="toggleStatus({{ $post->id }})"
+                        id="status-btn-{{ $post->id }}"
+                        class="px-3 py-1 text-sm rounded-full border transition
+                        {{ ($post->status ?? 'draft') === 'publish' ? 'bg-green-100 text-green-700 border-green-300'
+                            : 'bg-yellow-100 text-yellow-700 border-yellow-300' }}">
+                        {{ ucfirst($post->status ?? 'draft') }}
+                    </button>
                 </td>
                 <td class="p-4">{{ $post->created_at->format('d M Y') }}</td>
                 <td class="p-4">
                     <a href="{{ route('posts.download', $post->id) }}"
-                       class="text-sm text-black underline hover:text-gray-600">
-                        Download
+                        class="text-sm text-black underline hover:text-gray-600">
+                         Download
                     </a>
                 </td>
             </tr>
@@ -83,5 +87,27 @@
 <div class="mt-6">
     {{ $posts->links() }}
 </div>
+<script>
+    function toggleStatus(id) {
+        fetch(`/posts/${id}/status`, {
+            method: "PATCH",
+            headers: {
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                "Accept": "application/json"
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            const btn = document.getElementById(`status-btn-${id}`);
+            btn.innerText = data.label;
+    
+            if(data.status === 'processed'){
+                btn.className = "px-3 py-1 text-sm rounded-full border bg-green-100 text-green-700 border-green-300";
+            } else {
+                btn.className = "px-3 py-1 text-sm rounded-full border bg-yellow-100 text-yellow-700 border-yellow-300";
+            }
+        });
+    }
+</script>
 
 @endsection

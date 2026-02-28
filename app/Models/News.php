@@ -12,7 +12,7 @@ class News extends Model
         'template_id',
         'description',
         'heading',
-        'news_date',
+        'hashtag',
         'place',
         'news_type',
         'status',

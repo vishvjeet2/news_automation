@@ -17,7 +17,6 @@ use App\Models\Template;
 use Carbon\Traits\Cast;
 
 
-
 class NewsController extends Controller
 {
 
@@ -27,12 +26,12 @@ class NewsController extends Controller
         $type = $request->template_type;
 
         // redirecting as per selected news type
-        if ($type == '2') {
+        if ($type == '1') {
             
             return $this->generateNewswithImage($request);
         }
     
-        if ($type == '4') {
+        if ($type == '2') {
 
             return $this->createvideo($request);
         }
@@ -44,102 +43,122 @@ class NewsController extends Controller
     }
 
     
-    public function createvideo(Request $request){
+    public function createvideo(Request $request)
+    {
         $request->validate([
-            'heading' => 'required|string|max:50',
+            'heading' => 'required|string|max:70',
             'description' => 'required|string|max:300',
-            'city' => 'required|string|max:100',
+            'city' => 'required|string|max:20',
             'video' => 'required|file|mimes:mp4,mov,avi,webm|max:20480',
         ]);
+
+        
 
         $heading = $request->heading;
         $data = $request->description;
         $location = $request->city;
         $hashtag = $request->hashtag;
-        $catogry_id = $request->category_id;    // carogary 
-        $catogry_name = Category::where('id', $catogry_id)->value('name'); // name of the catagory
+        $category_id = $request->category_id;
 
-        
-    
-        // 1️⃣ generate image
+        $category_name = Category::where('id', $category_id)->value('name');
+
+        // 1️⃣ generate background image
         $imagePath = $this->generateNewsvideo($request);
 
-        // generating audio from description.
+        // 2️⃣ generate audio
         $audioPath = $this->hindiTTS($request);
 
+
         if (!$audioPath || !file_exists($audioPath)) {
-            dd('Audio not generated');
+            abort(500, 'Audio not generated');
         }
-    
-        // 2️⃣ store uploaded video
-        $videoFile = $request->file('video')->store('temp_videos', 'public');
+
+        // 3️⃣ store uploaded video
+        $storedVideo = $request->file('video')->store('temp_videos', 'public');
+        $videoFullPath = storage_path('app/public/' . $storedVideo);
         $extension = $request->file('video')->extension();
-    
-        $videoPath = storage_path('app/public/' . $videoFile);
-        $outputPath = storage_path('app/public/videos/output.mp4');
-    
-        if (!file_exists($videoPath)) {
-            dd('Video missing');
+
+        if (!file_exists($videoFullPath)) {
+            abort(500, 'Video missing');
         }
-    
-        // 3️⃣ overlay video on image
+
+        // ensure output directory exists
+        $outputDir = storage_path('app/public/videos');
+        if (!file_exists($outputDir)) {
+            mkdir($outputDir, 0755, true);
+        }
+
+        $filename = 'output_' . time() . '.mp4';
+        $outputFullPath = $outputDir . '/' . $filename;
+
+        // ffmpeg path
         $ffmpeg = 'C:\\ffmpeg\\bin\\ffmpeg.exe';
-    
+
         $command = [
             $ffmpeg,
             '-y',
-            '-loop', '1',                 // loop image as video background
+            '-loop', '1',
             '-i', $imagePath,
-            '-i', $videoPath,
+            '-i', $videoFullPath,
             '-i', $audioPath,
             '-filter_complex',
             "[1:v]scale=480:300[vid];[0:v][vid]overlay=(main_w-overlay_w)/2:main_h-overlay_h-110",
-
             '-map', '0:v',
-            '-map', '2:a',   // ✅ map custom audio
-
-            '-t', '20',                   // duration (seconds)
+            '-map', '2:a',
+            '-t', '20',
             '-c:v', 'libx264',
             '-pix_fmt', 'yuv420p',
             '-preset', 'veryfast',
-            $outputPath
+            $outputFullPath
         ];
-    
+
         $process = new Process($command);
         $process->setTimeout(300);
         $process->run();
-    
+
         if (!$process->isSuccessful()) {
-            dd($process->getErrorOutput());
+            abort(500, $process->getErrorOutput());
         }
 
-        $user_id = session('user_id');
-
+        // save news
         $news = News::create([
-            'category_id' => $catogry_id,
-            'user_id' => $user_id,
+            'category_id' => $category_id,
+            'user_id' => session('user_id'),
             'template_id' => $request->template_type,
             'description' => $data,
             'heading' => $heading,
             'hashtag' => $hashtag,
             'place' => $location,
-            'news_type' => $catogry_name,
-        ]);  
-        
-        NewsMedia::create([
+            'news_type' => $category_name,
+        ]);
+
+        // store relative path (production safe)
+        $relativePath = 'videos/' . $filename;
+
+        //stores output video
+        NewsOutput::create([
             'news_id' => $news->id,
-            'file_path' => $outputPath,
-            'file_type' => $extension,
+            'user_id' => session('user_id'),
+            'output_type' => 'video',
+            'file_path' => $relativePath,
             'is_primary' => 1
         ]);
-    
+
+        // stored user given video
+        NewsMedia::create([
+            'news_id' => $news->id,
+            'file_path' => $storedVideo,
+            'file_type' => $extension
+        ]);
+
         return view('news.download', [
-            'image' => 'storage/videos/' . basename($outputPath)
+            'image' => asset('storage/' . $relativePath)
         ]);
     }
 
     
-    public function generateNewswithImage(Request $request){
+    public function generateNewswithImage(Request $request)
+    {
         $request->validate([
             'heading' => 'required|string|max:60',
             'description' => 'required|string|max:300',
@@ -147,62 +166,88 @@ class NewsController extends Controller
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        $heading = $request->heading;
-        $data = $request->description;
-        $location = $request->city;
-        $hashtag = $request->hashtag;
-        $catogry_id = $request->category_id;    // carogary 
-        $catogry_name = Category::where('id', $catogry_id)->value('name'); // name of the catagory
+        $heading   = $request->heading;
+        $data      = $request->description;
+        $location  = $request->city;
+        $hashtag   = $request->hashtag;
+        $category_id = $request->category_id;
 
+        $category_name = Category::where('id', $category_id)->value('name');
+
+        // upload user image (optional)
+        $photoPath = null;
+        $stored = null;
+        
+
+        if ($request->hasFile('image')) {
+            // the file uploded by user stored in temp folder. 
+            $stored = $request->file('image')->store('temp', 'public');
+
+            $photoFullPath = storage_path('app/public/' . $stored);
+            $photoPath = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($photoFullPath));
+        }
+        // extention of file uploded by user.
         $extension = $request->file('image')->extension();
 
-        // store uploaded image
-        $photoPath = null;
-        if ($request->hasFile('image')) {
-            $photoPath = $request->file('image')->store('temp', 'public');
-            $photoPath = storage_path('app/public/' . $photoPath);
-        }
 
-        $template = storage_path('app/private/news_frame.jpeg');
+        $templatePath = storage_path('app/public/templates/news_frame.jpeg');
+        $template = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($templatePath));
 
-        // dd($photoPath);
-        $html = view('news.newsimage', compact('data','heading','template','photoPath','location','hashtag'))->render();
+        $html = view('news.newsimage', compact(
+            'data','heading','template','photoPath','location','hashtag'
+        ))->render();
 
-
+        // ensure storage folder exists
         $directory = storage_path('app/public/images');
 
         if (!file_exists($directory)) {
             mkdir($directory, 0755, true);
         }
 
-        $imagePath = $directory . '/news_' . time() . '.jpeg';
+        $filename = 'news_' . time() . '.png';
+
+        // absolute path for saving file
+        $absolutePath = $directory . '/' . $filename;
 
         Browsershot::html($html)
             ->windowSize(800, 1000)
-            ->save($imagePath);
-        
-        $user_id = session('user_id');
+            ->save($absolutePath);
 
+        
         $news = News::create([
-            'category_id' => $catogry_id,
-            'user_id' => $user_id,
+            'category_id' => $category_id,
+            'user_id' => session('user_id'),
             'template_id' => $request->template_type,
             'description' => $data,
             'heading' => $heading,
             'hashtag' => $hashtag,
             'place' => $location,
-            'news_type' => $catogry_name,
-        ]);  
-        
-        // 
+            'news_type' => $category_name,
+        ]);
+
+        // store relative path (production safe)
+        $relativePath = 'images/' . $filename;
+
+        // output image stored in this table
         NewsOutput::create([
+            'user_id' => session('user_id'),
             'news_id' => $news->id,
-            'file_path' => $imagePath,
+            'output_type' => 'image',
+            'file_path' => $relativePath,
             'is_primary' => 1
         ]);
-        
+
+        NewsMedia::create([
+            'news_id' => $news->id,
+            'file_path' => $stored,
+            'file_type' => $extension
+        ]);
+
+
+
         return view('news.download', [
-            'image' => 'storage/images/' . basename($imagePath)
+            'image' => asset('storage/' . $relativePath),
+            'newsID' => $news->id
         ]);
     }
 
@@ -309,9 +354,10 @@ class NewsController extends Controller
         // save inside storage/app/public
         $savePath = storage_path('app/public/hindi.mp3');
 
+
         $escapedText = escapeshellarg($text);
 
-        $command = "python tts.py $escapedText \"$savePath\"";
+        $command = "python tts.py $escapedText";
         exec($command);
 
         return $savePath;   // ✅ return real file path
@@ -344,6 +390,23 @@ class NewsController extends Controller
         ]);
 
         return back()->with('success', 'Category added successfully');
+    }
+
+    public function download($id)
+    {
+        $media = NewsOutput::where('news_id', $id)->first();
+
+        if (!$media) {
+            abort(404, 'Media not found in DB');
+        }
+
+        $filePath = storage_path('app/public/' . $media->file_path);
+
+        if (!file_exists($filePath)) {
+            abort(404, 'File missing on server');
+        }
+
+        return response()->download($filePath);
     }
     
 }

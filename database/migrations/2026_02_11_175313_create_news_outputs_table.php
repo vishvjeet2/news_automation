@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('news_outputs', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('news_id')->constrained()->cascadeOnDelete();
-            $table->enum('output_type',['poster','video']);
+            $table->string('output_type');
             $table->string('file_path');
             $table->timestamps();
         });

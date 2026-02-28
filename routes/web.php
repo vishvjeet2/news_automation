@@ -30,7 +30,9 @@ Route::middleware('auth.check')->group(function () {
 
     Route::post('/posts/generate', [NewsController::class, 'newstype'])->name('posts.generate');
 
-    Route::get('/posts/{id}/download', [PostController::class, 'download'])->name('posts.download');
+    Route::patch('/posts/{news}/status', [PostController::class, 'toggleStatus'])->name('posts.toggleStatus');
+
+    Route::get('/{id}/download', [NewsController::class, 'download'])->name('posts.download');
 
     Route::get('/categories', function () {return view('news.catagory'); })->name('view.category.store');
 

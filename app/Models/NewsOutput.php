@@ -11,6 +11,7 @@ class NewsOutput extends Model
 
     protected $fillable = [
         'news_id',
+        'user_id',
         'output_type',
         'file_path'
     ];

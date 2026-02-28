@@ -72,6 +72,8 @@
                     @yield('title')
                 </h1>
             </div>
+            
+            @stack('scripts')
 
             @yield('content')
 

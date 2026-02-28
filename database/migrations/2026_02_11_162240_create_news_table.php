@@ -21,7 +21,7 @@ return new class extends Migration
             $table->text('hashtag');
             $table->date('news_date');
             $table->string('place');
-            $table->enum('news_type',['image','video','text']);
+            $table->string('news_type');
             $table->enum('status',['draft','processed'])->default('draft');
             $table->string('audio_path')->nullable();
             $table->timestamps();
