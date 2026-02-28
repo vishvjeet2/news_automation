@@ -34,20 +34,20 @@
                 <a href="{{ route('posts.create') }}"
                     class="block px-4 py-2 rounded-md transition
                     {{ request()->routeIs('posts.create')
-                    ? 'bg-gray-200 text-black font-medium border-l-4 border-black'
-                    : 'text-gray-700 hover:bg-gray-100' }}">
+                        ? 'bg-gray-200 text-black font-medium border-l-4 border-black'
+                        : 'text-gray-700 hover:bg-gray-100' }}">
                     Create Post
                 </a>
 
-                {{-- <a href="{{ route('view.category.store') }}"
+                <a href="{{ route('view.category.store') }}"
                     class="block px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition">
                     Categories
-                </a> --}}
+                </a>
 
-                {{-- <a href="{{ route('templates.index') }}"
+                <a href="{{ route('templates.index') }}"
                     class="block px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition">
                     Templates
-                </a> --}}
+                </a>
 
             </nav>
 

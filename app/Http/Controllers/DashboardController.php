@@ -15,9 +15,6 @@ class DashboardController extends Controller
             ->where('user_id', session('user_id'))
             ->latest()
             ->paginate(10);
-        
-        
-        
 
         $stats = [
             'total' => News::where('user_id', $userId)->count(),

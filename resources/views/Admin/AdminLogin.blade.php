@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login - News Automation</title>
+    <title>Admin Login - News Automation</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Tailwind CDN -->
@@ -19,7 +19,7 @@
                 News Automation
             </h1>
             <p class="text-gray-500 mt-2 text-sm">
-                Sign in to your account
+                Sign in to Admin panel
             </p>
         </div>
 
@@ -29,7 +29,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('login.submit') }}" class="space-y-6">
+        <form method="POST" action="{{ route('Adminlogin.submit') }}" class="space-y-6">
             @csrf
 
             <!-- Email -->
@@ -59,13 +59,12 @@
                     placeholder="Enter your password"
                 >
             </div>
-            <div>
-                <a href="{{ route('Adminlogin') }}" class="block text-sm font-medium text-gray-700 mb-2"> Admin login</a>
-            </div>
+
             <!-- Button -->
             <button 
                 type="submit"
-                class="w-full bg-black text-white py-2.5 rounded-md font-medium hover:bg-gray-800 transition duration-200 shadow-md">
+                class="w-full bg-black text-white py-2.5 rounded-md font-medium hover:bg-gray-800 transition duration-200 shadow-md"
+            >
                 Login
             </button>
 

@@ -11,10 +11,10 @@ class Admin extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
 
-    protected $table = "admin";
+    protected $table = 'admin';
 
     protected $fillable = [
-        'name','email','password','status'
+        'name','email','password'
     ];
 
     protected $hidden = [

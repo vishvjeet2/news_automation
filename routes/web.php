@@ -1,6 +1,9 @@
 <?php
 // i have removed the authcontroller currently to reduce confusion
+
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\News\NewsController;
@@ -16,6 +19,11 @@ use App\Http\Controllers\PostController;
 Route::get('/login', [LoginController::class, 'showLogin'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+Route::get('/adminlogin', [AdminController::class, 'showadminlogin'])->name('Adminlogin');
+Route::post('/adminlogin', [AdminController::class, 'admin'])->name('Adminlogin.submit');
+
+Route::get('/admindashboard', [AdminDashboardController::class, 'index']);
 
 
 //////////////////////////////////////////////
