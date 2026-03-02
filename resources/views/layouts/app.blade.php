@@ -39,16 +39,7 @@
                     Create Post
                 </a>
 
-                {{-- <a href="{{ route('view.category.store') }}"
-                    class="block px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition">
-                    Categories
-                </a> --}}
-
-                {{-- <a href="{{ route('templates.index') }}"
-                    class="block px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition">
-                    Templates
-                </a> --}}
-
+                
             </nav>
 
             <div class="p-4 border-t border-gray-200">
