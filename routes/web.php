@@ -39,6 +39,8 @@ Route::middleware('auth.check')->group(function () {
     Route::post('/categories', [NewsController::class, 'insertnewscatogarytype'])->name('category.store');
 
     Route::get('/templates', function () { return view('news.templet');})->name('templates.index');
+    
+    Route::post('/templates', [NewsController::class, 'storetemplete'])->name('news.templates.store');
 
 });
 
@@ -51,7 +53,7 @@ Route::middleware('auth.check')->group(function () {
 //     return view('news.templet');
 // });
 
-Route::post('/templates', [NewsController::class, 'storetemplete'])->name('news.templates.store');
+
 
 
 

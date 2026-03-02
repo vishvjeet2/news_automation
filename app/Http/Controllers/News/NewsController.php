@@ -401,17 +401,30 @@ class NewsController extends Controller
         return back()->with('success', 'Category added successfully');
     }
 
-    // public function download($id){
-    //     dd("inside download");
-    //     $post = News::findOrFail($id);
+    public function download($id)
+    {
+        $media = NewsOutput::where('news_id', $id)->first();
 
-    //     // file path stored in DB
-    //     $imagePath = 'storage/' . $post->file_path;
+        if (!$media) {
+            abort(404, 'Media not found in DB');
+        }
 
-    //     return view('news.download', [
-    //         'image' => $imagePath
-    //     ]);
-    // }
+        // file stored inside storage/app/public/
+        $relativePath = $media->file_path;
+
+        $fullPath = storage_path('app/public/' . $relativePath);
+
+        if (!file_exists($fullPath)) {
+            abort(404, 'File missing on server');
+        }
+
+        // create public URL for preview
+        $publicPath = 'storage/' . $relativePath;
+
+        return view('news.preview', [
+            'image' => $publicPath
+        ]);
+    }
     
 }
 ?>

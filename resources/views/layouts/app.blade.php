@@ -39,6 +39,22 @@
                     Create Post
                 </a>
 
+                <a href="{{ route('view.category.store') }}"
+                    class="block px-4 py-2 rounded-md transition
+                    {{ request()->routeIs('view.category.store')
+                    ? 'bg-gray-200 text-black font-medium border-l-4 border-black'
+                    : 'text-gray-700 hover:bg-gray-100' }}">
+                    Create Catagory
+                </a>
+
+                <a href="{{ route('templates.index') }}"
+                    class="block px-4 py-2 rounded-md transition
+                    {{ request()->routeIs('templates.index')
+                    ? 'bg-gray-200 text-black font-medium border-l-4 border-black'
+                    : 'text-gray-700 hover:bg-gray-100' }}">
+                    Create Templet
+                </a>
+
                 
             </nav>
 
@@ -52,7 +68,7 @@
                 </form>
             </div>
 
-        </aside>
+        </as~ide>
 
         <!-- Main Content -->
         <main class="flex-1 p-8 ml-64">
