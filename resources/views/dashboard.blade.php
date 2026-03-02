@@ -5,24 +5,27 @@
 @section('content')
 
 <!-- Stats -->
-<div class="grid grid-cols-4 gap-6 mb-8">
+<div class="grid gap-6 mb-8
+            grid-cols-1
+            sm:grid-cols-2
+            lg:grid-cols-4">
 
-    <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6">
+    <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6 max-w-md w-full">
         <p class="text-sm text-gray-500">Total Posts</p>
         <p class="text-2xl font-semibold text-black mt-2">{{ $stats['total'] }}</p>
     </div>
 
-    <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6">
+    <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6 max-w-md w-full">
         <p class="text-sm text-gray-500">Images</p>
         <p class="text-2xl font-semibold text-black mt-2">{{ $stats['images'] }}</p>
     </div>
 
-    <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6">
+    <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6 max-w-md w-full">
         <p class="text-sm text-gray-500">Videos</p>
         <p class="text-2xl font-semibold text-black mt-2">{{ $stats['videos'] }}</p>
     </div>
 
-    <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6">
+    <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6 max-w-md w-full">
         <p class="text-sm text-gray-500">Drafts</p>
         <p class="text-2xl font-semibold text-black mt-2">{{ $stats['drafts'] }}</p>
     </div>
@@ -40,7 +43,7 @@
 <!-- Posts Table -->
 <div class="bg-white border border-gray-200 shadow-sm rounded-lg overflow-hidden">
 
-    <table class="w-full text-left">
+    <table class="w-full text-left text-sm md:text-base">
         <thead class="bg-gray-50 border-b border-gray-200">
         <tr>
             <th class="p-4 text-sm font-medium text-gray-600">Heading</th>
