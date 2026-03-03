@@ -13,7 +13,7 @@
     <div class="flex min-h-screen">
 
         <!-- Sidebar -->
-        <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
+        <aside class="w-64 bg-white border-r border-gray-200 flex flex-col fixed top-0 left-0 h-screen">
 
             <div class="p-6 border-b border-gray-200">
                 <h2 class="text-xl font-semibold text-black">
@@ -55,7 +55,7 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 p-8">
+        <main class="flex-1 p-8 ml-64">
 
             <!-- Top Header -->
             <div class="mb-8">

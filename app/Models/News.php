@@ -18,10 +18,15 @@ class News extends Model
         'status',
         'audio_path'
     ];
-    
+
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function admin()
+    {
+        return $this->belongsTo(Admin::class);
     }
 
     public function category()
@@ -46,6 +51,6 @@ class News extends Model
 
     public function latestOutput()
     {
-        return $this->hasOne(NewsOutput::class)->latestOfMany();    
+        return $this->hasOne(NewsOutput::class)->latestOfMany();
     }
 }

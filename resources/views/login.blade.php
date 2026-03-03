@@ -19,7 +19,7 @@
                 News Automation
             </h1>
             <p class="text-gray-500 mt-2 text-sm">
-                Sign in to your account
+                Log in to your account
             </p>
         </div>
 
@@ -60,7 +60,9 @@
                 >
             </div>
             <div>
-                <a href="{{ route('Adminlogin') }}" class="block text-sm font-medium text-gray-700 mb-2"> Admin login</a>
+                <a
+                 href="{{ route('admin.login') }}" 
+                 class="block text-sm font-medium text-gray-700 mb-2"> Admin login</a>
             </div>
             <!-- Button -->
             <button 
