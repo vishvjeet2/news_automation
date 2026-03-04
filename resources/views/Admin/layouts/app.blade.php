@@ -42,19 +42,9 @@
                 Create Post
             </a>
 
-            <a 
-            href="
-            {{-- {{ route('admin.post.create') }} --}}"
-               class="block px-4 py-2 rounded-md transition
-               {{ request()->routeIs('admin.post.create')
-               ? 'bg-gray-200 text-black font-medium border-l-4 border-black'
-               : 'text-gray-700 hover:bg-gray-100' }}">
-                Templats
-            </a>
-
              <a 
             href="
-            {{-- {{ route('admin.post.create') }}" --}}"
+            {{ route('admin.categories.index') }}"
                class="block px-4 py-2 rounded-md transition
                {{ request()->routeIs('admin.post.create')
                ? 'bg-gray-200 text-black font-medium border-l-4 border-black'

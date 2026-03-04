@@ -6,7 +6,6 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\PostController as AdminPostController;
 use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\News\NewsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostController;
 
@@ -48,9 +47,11 @@ Route::prefix('admin')
     Route::get('/dashboard',[AdminDashboardController::class,'index'])->name('admin.dashboard');
     Route::get('/posts/create', [AdminPostController::class,'create'])->name('admin.posts.create');
     Route::post('/posts/{news}/toggle-status', [AdminPostController::class, 'toggleStatus']);
+    Route::get('/categories',[CategoryController::class,'index'])->name('admin.categories.index');
     Route::post('/categories', [CategoryController::class, 'store'])->name('admin.categories.store');
     Route::get('/admin/categories', [AdminPostController::class, 'index'])->name('admin.categories.index');
     Route::post('/posts/generate', [AdminPostController::class, 'store'])->name('admin.post.store');
+    Route::get('/posts/{id}/download', [AdminPostController::class, 'download'])->name('admin.post.download');
 });
 
 
@@ -78,48 +79,5 @@ Route::middleware('auth.check:user')->group(function () {
 });
 
 
+Route::get('/', function () {return view('welcome');});
 
-
-
-
-// Route::get('/templates', function(){
-//     return view('news.templet');
-// });
-
-//Route::post('/templates', [NewsController::class, 'storetemplete'])->name('news.templates.store');
-
-
-
-// Route::get('/news', function(){
-//     return view('news.news1');
-// });
-
-
-
-
-
-
-
-
-
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
-
-// Route::group(['prefix' => 'admin'], function(){
-//     Route::get('/login', function(){
-//         return view('AdminLogin');
-//     });
-
-//    // Route::post('/login', [AuthController::class, 'login'])->name('admin.login');
-
-//     Route::middleware('admin.auth')->group(function () {
-//         Route::get('/dashboard', fn () => view('Admin.AdminDashboard'))->name('admin.dashboard');
-//     });
-// });

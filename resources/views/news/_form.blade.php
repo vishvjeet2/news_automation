@@ -1,18 +1,37 @@
-<form method="POST"
-      action="{{ $route }}"
-      enctype="multipart/form-data"
-      class="space-y-6">
+<!--
+|----------------------------------------------------------------------------
+| News Generation Form
+|----------------------------------------------------------------------------
+| This form is used to create/generate news.
+| $route decides where form data will go.
+| - In User panel → goes to User PostController
+| - In Admin panel → goes to Admin PostController
+| When Generate button is clicked, form submits to that route.
+-->
+<form method="POST" action="{{ $route }}" enctype="multipart/form-data" class="space-y-6">
 
+    <!--
+    |----------------------------------------------------------------------------
+    | CSRF Protection
+    |----------------------------------------------------------------------------
+    | Required for Laravel form security.
+    -->
     @csrf
 
+    <!--
+    |----------------------------------------------------------------------------
+    | Category Selection
+    |----------------------------------------------------------------------------
+    | User selects a category.
+    | category_id will be sent to controller on submit.
+    -->
     <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">
             Select Category
         </label>
 
-        <select name="category_id"
-                required
-                class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-black">
+        <select name="category_id" required
+            class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-black">
             <option value="">-- Select Category --</option>
             @foreach ($categories as $category)
                 <option value="{{ $category->id }}">
@@ -22,21 +41,25 @@
         </select>
     </div>
 
+    <!--
+    |----------------------------------------------------------------------------
+    | Template Selection
+    |----------------------------------------------------------------------------
+    | When template changes, dynamic fields will be generated using JS.
+    | data-type is used to detect text/image/video template.
+    -->
     <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">
             Select Template
         </label>
 
-        <select id="templateType"
-                name="template_type"
-                required
-                class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-black">
+        <select id="templateType" name="template_type" required
+            class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-black">
 
             <option value="">-- Select Template --</option>
 
             @foreach ($templates as $template)
-                <option value="{{ $template->id }}"
-                        data-type="{{ $template->type }}">
+                <option value="{{ $template->id }}" data-type="{{ $template->type }}">
                     {{ $template->name }}
                 </option>
             @endforeach
@@ -44,24 +67,57 @@
         </select>
     </div>
 
+    <!--
+    |----------------------------------------------------------------------------
+    | Dynamic Fields Container
+    |----------------------------------------------------------------------------
+    | JS will inject Heading, Description, City,
+    | and Image/Video upload fields here.
+    -->
     <div id="dynamicFields" class="space-y-5"></div>
 
-    <button type="submit"
-            class="w-full bg-black text-white py-3 rounded-md hover:bg-gray-800 transition">
+    <!--
+    |----------------------------------------------------------------------------
+    | Generate Button
+    |----------------------------------------------------------------------------
+    | On click:
+    | 1. Form submits to $route
+    | 2. Controller stores news
+    | 3. NewsGeneratorService may process it
+    -->
+    <button type="submit" class="w-full bg-black text-white py-3 rounded-md hover:bg-gray-800 transition">
         Generate
     </button>
 </form>
+
 <script>
-const templateSelect = document.getElementById("templateType");
+    /*
+|----------------------------------------------------------------------------
+| Dynamic Template Field Script
+|----------------------------------------------------------------------------
+| When user selects a template:
+| - Script reads template type (text/image/video)
+| - Generates required input fields
+| - Adds character counter for description
+*/
+    const templateSelect = document.getElementById("templateType");
 
-if (templateSelect) {
+    if (templateSelect) {
 
-    templateSelect.addEventListener("change", function(){
+        templateSelect.addEventListener("change", function() {
 
-        let selected = this.options[this.selectedIndex];
-        let type = selected.getAttribute('data-type');
+            // Get selected template
+            let selected = this.options[this.selectedIndex];
 
-        let fields = `
+            // Detect template type
+            let type = selected.getAttribute('data-type');
+
+            /*
+            |----------------------------------------------------------------------------
+            | Heading Field (Always Visible)
+            |----------------------------------------------------------------------------
+            */
+            let fields = `
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Heading</label>
                 <input type="text" name="heading"
@@ -70,13 +126,25 @@ if (templateSelect) {
             </div>
         `;
 
-        let descriptionLimit = 300;
+            // Default description limit
+            let descriptionLimit = 300;
 
-        if (type === 'text') {
-            descriptionLimit = 400;
-        }
+            /*
+            |----------------------------------------------------------------------------
+            | Text Template Rule
+            |----------------------------------------------------------------------------
+            | If template type is text, increase description limit.
+            */
+            if (type === 'text') {
+                descriptionLimit = 400;
+            }
 
-        fields += `
+            /*
+            |----------------------------------------------------------------------------
+            | Description Field + Character Counter
+            |----------------------------------------------------------------------------
+            */
+            fields += `
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">
                     Description
@@ -97,7 +165,12 @@ if (templateSelect) {
             </div>
         `;
 
-        fields += `
+            /*
+            |----------------------------------------------------------------------------
+            | City Field (Always Visible)
+            |----------------------------------------------------------------------------
+            */
+            fields += `
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
                 <input type="text" name="city"
@@ -106,37 +179,56 @@ if (templateSelect) {
             </div>
         `;
 
-        if (type === 'image') {
-            fields += `
+            /*
+            |----------------------------------------------------------------------------
+            | Image Template Rule
+            |----------------------------------------------------------------------------
+            | If template type is image, show image upload input.
+            */
+            if (type === 'image') {
+                fields += `
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Upload Image</label>
                     <input type="file" name="image"
                            class="w-full border border-gray-300 rounded-md px-4 py-2">
                 </div>
             `;
-        }
+            }
 
-        if (type === 'video') {
-            fields += `
+            /*
+            |----------------------------------------------------------------------------
+            | Video Template Rule
+            |----------------------------------------------------------------------------
+            | If template type is video, show video upload input.
+            */
+            if (type === 'video') {
+                fields += `
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Upload Video</label>
                     <input type="file" name="video"
-                           class="w-full border border-gray-300 rounded-md px-4 py-2">
+                        class="w-full border border-gray-300 rounded-md px-4 py-2">
                 </div>
             `;
-        }
+            }
 
-        document.getElementById("dynamicFields").innerHTML = fields;
+            // Inject generated fields
+            document.getElementById("dynamicFields").innerHTML = fields;
 
-        const textarea = document.getElementById("descriptionField");
-        const counter = document.getElementById("charCount");
+            /*
+            |----------------------------------------------------------------------------
+            | Character Counter Logic
+            |----------------------------------------------------------------------------
+            | Updates live character count while typing description.
+            */
+            const textarea = document.getElementById("descriptionField");
+            const counter = document.getElementById("charCount");
 
-        if (textarea && counter) {
-            textarea.addEventListener("input", function() {
-                counter.innerText = textarea.value.length + " / " + descriptionLimit;
-            });
-        }
-    });
+            if (textarea && counter) {
+                textarea.addEventListener("input", function() {
+                    counter.innerText = textarea.value.length + " / " + descriptionLimit;
+                });
+            }
+        });
 
-}
+    }
 </script>

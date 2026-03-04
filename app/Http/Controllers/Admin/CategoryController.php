@@ -10,12 +10,24 @@ class CategoryController extends Controller
 {
 
 
-    public function index(){
-        $categories=Category::latest()->pagination();
-        return view('admin.categories.index',compact('categories'));
+    /*
+    |--------------------------------------------------------------------------
+    | Show Category Management Page
+    |--------------------------------------------------------------------------
+    |
+    | Loads paginated categories.
+    | Used for admin management.
+    |
+    */
+
+    public function index()
+    {
+        $categories = Category::latest()->paginate(10);
+
+        return view('admin.categories.index', compact('categories'));
     }
 
-    
+
     /*
     |--------------------------------------------------------------------------
     | Store New Category (Admin Only)
@@ -38,8 +50,8 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|unique:categories,name',
-            'slug' => 'required|string|unique:categories,slug',
+            'name' => 'required|string|max:100|unique:categories,name',
+            'slug' => 'required|string|max:100|unique:categories,slug',
         ]);
 
         Category::create([
@@ -47,6 +59,8 @@ class CategoryController extends Controller
             'slug' => $request->slug,
         ]);
 
-        return back()->with('success', 'Category added successfully');
+        return redirect()
+            ->route('admin.categories.index')
+            ->with('success', 'Category added susccesfully.');
     }
 }

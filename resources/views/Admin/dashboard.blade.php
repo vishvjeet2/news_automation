@@ -49,6 +49,7 @@
                     <th class="p-4 text-sm font-medium text-gray-600">Status</th>
                     <th class="p-4 text-sm font-medium text-gray-600">Created By</th>
                     <th class="p-4 text-sm font-medium text-gray-600">Created</th>
+                    <th class="p-4 text-sm font-medium text-gray-600">Download</th>
                 </tr>
             </thead>
             <tbody>
@@ -78,6 +79,12 @@
                             @endif
                         </td>
                         <td class="p-4">{{ $post->created_at->format('d M Y') }}</td>
+                        <td class="p-4">
+                            <a href="{{ route('admin.post.download', $post->id) }}"
+                                class="text-sm text-black underline hover:text-gray-600">
+                                Download
+                            </a>
+                        </td>
                     </tr>
                 @empty
                     <tr>
