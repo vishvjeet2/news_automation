@@ -23,12 +23,20 @@
         <!-- Sidebar -->
 
 
-    <aside class="w-64 bg-white border-r border-gray-200 flex flex-col fixed top-0 left-0 h-screen">
+        <aside id="sidebar"
+        class="w-full md:w-64 bg-white border-r border-gray-200
+        flex flex-col fixed inset-y-0 left-0
+        transform -translate-x-full md:translate-x-0
+        transition-transform duration-300 z-50">
+            <!-- Mobile Close Button -->
+            <div class="md:hidden flex justify-end p-4 border-b">
+                <button onclick="toggleSidebar()" class="text-2xl leading-none">
+                    ✕
+                </button>
+            </div>
 
-            <div class="p-6 border-b border-gray-200">
-                <h2 class="text-xl font-semibold text-black">
-                    News Automation
-                </h2>
+            <div class="p-6 border-b border-gray-200 hidden md:block">
+                <h2 class="text-xl font-semibold text-black">News Automation</h2>
             </div>
 
             <nav class="flex-1 p-4 space-y-2">
@@ -98,7 +106,7 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 p-8 ml-64">
+        <main class="flex-1 p-6 md:p-8 md:ml-64">
 
             <!-- Top Header -->
             <div class="mb-8">

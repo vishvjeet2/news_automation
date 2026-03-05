@@ -10,16 +10,30 @@
 
 <body class="bg-gray-100 min-h-screen">
 
+    <!-- Mobile Top Bar -->
+    <div class="md:hidden fixed top-0 left-0 w-full bg-white border-b z-50">
+        <div class="flex items-center justify-between px-4 py-3">
+            <h2 class="text-lg font-semibold">News Automation</h2>
+            <button onclick="toggleSidebar()" class="text-2xl">☰</button>
+        </div>
+    </div>
+
 <div class="flex min-h-screen">
 
-    <!-- Sidebar -->
-    {{-- <aside class="w-64 bg-white border-r border-gray-200 flex flex-col fixed top-0 left-0 h-screen"> --}}
-        {{-- it will mak side bar scrollable in future in case of overflow --}}
-        
 
-        <aside class="w-64 bg-white border-r border-gray-200 flex flex-col fixed top-0 left-0 h-screen overflow-y-auto">
-        
-                    <div class="p-6 border-b border-gray-200">
+                <aside id="sidebar"
+                class="w-full md:w-64 bg-white border-r border-gray-200
+                flex flex-col fixed inset-y-0 left-0
+                transform -translate-x-full md:translate-x-0
+                transition-transform duration-300 z-50">
+                    <!-- Mobile Close Button -->
+                    <div class="md:hidden flex justify-end p-4 border-b">
+                        <button onclick="toggleSidebar()" class="text-2xl leading-none">
+                            ✕
+                        </button>
+                    </div>        
+
+                    <div class="p-6 border-b border-gray-200 hidden md:block">
                         <h2 class="text-xl font-semibold text-black">
                             Admin Panel
                         </h2>
@@ -111,7 +125,7 @@
                 </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 p-8 ml-64">
+    <main class="flex-1 p-6 md:p-8 md:ml-64">
 
         <div class="mb-8">
             <h1 class="text-2xl font-semibold text-black">
@@ -125,6 +139,13 @@
     </main>
 
 </div>
+
+<script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('-translate-x-full');
+    }
+</script>   
 
 </body>
 </html>

@@ -82,7 +82,7 @@
                         <td class="p-4">
                             <a href="{{ route('admin.post.download', $post->id) }}"
                                 class="text-sm text-black underline hover:text-gray-600">
-                                Download
+                                Preview
                             </a>
                         </td>
                     </tr>
