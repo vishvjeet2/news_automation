@@ -14,7 +14,7 @@ class DashboardController extends Controller
         $posts = News::with(['category', 'latestOutput'])
             ->where('user_id', session('user_id'))
             ->latest()
-            ->paginate(10);
+            ->paginate(5);
 
         $stats = [
             'total' => News::where('user_id', $userId)->count(),

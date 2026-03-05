@@ -4,153 +4,224 @@
 
 @section('content')
 
-    <!-- Stats -->
-    <div class="grid grid-cols-4 gap-6 mb-8">
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
 
-        <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6">
-            <p class="text-sm text-gray-500">Total Posts</p>
-            <p id="stat-total" class="text-2xl font-semibold text-black mt-2">{{ $stats['total'] }}</p>
-        </div>
-    
-        <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6">
-            <p class="text-sm text-gray-500">Published</p>
-            <p id="stat-published" class="text-2xl font-semibold text-black mt-2">{{ $stats['published'] }}</p>
-        </div>
-    
-        <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6">
-            <p class="text-sm text-gray-500">Drafts</p>
-            <p id="stat-drafts" class="text-2xl font-semibold text-black mt-2">{{ $stats['drafts'] }}</p>
-        </div>
-    
-        <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6">
-            <p class="text-sm text-gray-500">Users</p>
-            <p id="stat-users" class="text-2xl font-semibold text-black mt-2">{{ $stats['users'] }}</p>
-        </div>
-    
+    <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6">
+        <p class="text-sm text-gray-500 font-medium">Total Posts</p>
+        <p id="stat-total" class="text-2xl font-bold text-gray-900 mt-2">{{ $stats['total'] }}</p>
     </div>
 
-    <!-- Create Button -->
-    <div class="mb-6">
-        <a href="{{ route('admin.posts.create') }}"
-            class="inline-block bg-black text-white px-6 py-3 rounded-md shadow hover:bg-gray-800 transition">
-            + Create New Post
+    <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6">
+        <p class="text-sm text-gray-500 font-medium">Published</p>
+        <p id="stat-published" class="text-2xl font-bold text-gray-900 mt-2">{{ $stats['published'] }}</p>
+    </div>
+
+    <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6">
+        <p class="text-sm text-gray-500 font-medium">Drafts</p>
+        <p id="stat-drafts" class="text-2xl font-bold text-gray-900 mt-2">{{ $stats['drafts'] }}</p>
+    </div>
+
+    <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6">
+        <p class="text-sm text-gray-500 font-medium">Users</p>
+        <p id="stat-users" class="text-2xl font-bold text-gray-900 mt-2">{{ $stats['users'] }}</p>
+    </div>
+
+</div>
+
+
+<!-- Action Bar -->
+<div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+    <div class="hidden md:block"></div>
+
+    <a href="{{ route('admin.posts.create') }}"
+       class="block w-full md:w-auto text-center bg-black text-white px-6 py-3 rounded-lg shadow hover:bg-gray-800 transition font-medium text-sm md:text-base">
+        + Create New Post
+    </a>
+
+</div>
+
+
+<!-- Responsive Table -->
+<div class="w-full md:bg-white md:border md:border-gray-200 md:shadow-sm md:rounded-lg md:overflow-hidden">
+
+<table class="w-full text-left text-sm md:text-base border-separate md:border-collapse space-y-4 md:space-y-0">
+
+    <!-- Desktop Header -->
+    <thead class="hidden md:table-header-group bg-gray-50 border-b border-gray-200">
+        <tr>
+            <th class="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Heading</th>
+            <th class="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Type</th>
+            <th class="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
+            <th class="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+            <th class="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Created By</th>
+            <th class="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Created</th>
+            <th class="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Download</th>
+        </tr>
+    </thead>
+
+<tbody class="block md:table-row-group">
+
+@forelse($posts as $post)
+
+<tr class="flex flex-col md:table-row bg-white rounded-xl shadow-sm border border-gray-200 mb-4 md:mb-0 md:border-b md:border-gray-100 md:shadow-none hover:bg-gray-50 transition relative overflow-hidden">
+
+    <!-- Heading -->
+    <td class="order-1 block md:table-cell p-5 pb-2 md:p-4 text-gray-900">
+        <div class="text-lg font-bold leading-tight md:text-sm md:font-normal">
+            {{ $post->heading }}
+        </div>
+    </td>
+
+    <!-- Type -->
+    <td class="order-2 block md:table-cell px-5 py-1 md:p-4">
+        <div class="flex justify-between md:block items-center">
+            <span class="text-xs font-semibold text-gray-400 uppercase md:hidden">Type</span>
+            <span class="capitalize font-medium text-gray-700">
+                {{ $post->latestOutput->output_type ?? 'N/A' }}
+            </span>
+        </div>
+    </td>
+
+    <!-- Category -->
+    <td class="order-3 block md:table-cell px-5 py-1 md:p-4">
+        <div class="flex justify-between md:block items-center">
+            <span class="text-xs font-semibold text-gray-400 uppercase md:hidden">Category</span>
+            <span class="font-medium text-gray-700">
+                {{ $post->category->name ?? '-' }}
+            </span>
+        </div>
+    </td>
+
+    <!-- Status -->
+    <td class="order-4 block md:table-cell px-5 py-1 md:p-4">
+        <div class="flex justify-between md:block items-center">
+
+            <span class="text-xs font-semibold text-gray-400 uppercase md:hidden">Status</span>
+
+            <button type="button"
+                onclick="toggleStatus({{ $post->id }})"
+                id="status-btn-{{ $post->id }}"
+                class="px-2.5 py-0.5 rounded-full text-xs font-medium border inline-block
+                {{ ($post->status ?? 'draft') === 'processed'
+                    ? 'bg-green-50 text-green-700 border-green-200'
+                    : 'bg-yellow-50 text-yellow-700 border-yellow-200' }}">
+                {{ ucfirst($post->status ?? 'draft') }}
+            </button>
+
+        </div>
+    </td>
+
+    <!-- Created By -->
+    <td class="order-5 block md:table-cell px-5 py-1 md:p-4">
+        <div class="flex justify-between md:block items-center">
+            <span class="text-xs font-semibold text-gray-400 uppercase md:hidden">Author</span>
+
+            <span class="text-gray-600 font-medium">
+
+                @if ($post->admin)
+                    {{ $post->admin->name }}
+                @elseif($post->user)
+                    {{ $post->user->name }}
+                @else
+                    Unknown
+                @endif
+
+            </span>
+        </div>
+    </td>
+
+    <!-- Created -->
+    <td class="order-6 block md:table-cell px-5 py-1 md:p-4">
+        <div class="flex justify-between md:block items-center">
+            <span class="text-xs font-semibold text-gray-400 uppercase md:hidden">Created</span>
+            <span class="text-gray-500 font-medium">
+                {{ $post->created_at->format('d M Y') }}
+            </span>
+        </div>
+    </td>
+
+    <!-- Download -->
+    <td class="order-last block md:table-cell border-t border-gray-100 md:border-none mt-3 md:mt-0 p-0 md:p-4 bg-gray-50 md:bg-transparent">
+        <a href="{{ route('admin.post.download', $post->id) }}"
+           class="block w-full py-3 md:py-0 text-center md:text-left text-sm font-semibold text-blue-600 hover:text-blue-800 md:text-black md:underline md:bg-transparent">
+            Preview
         </a>
-    </div>
+    </td>
 
-    <!-- Latest Posts Table (All Users) -->
-    <div class="bg-white border border-gray-200 shadow-sm rounded-lg overflow-hidden">
+</tr>
 
-        <table class="w-full text-left">
-            <thead class="bg-gray-50 border-b border-gray-200">
-                <tr>
-                    <th class="p-4 text-sm font-medium text-gray-600">Heading</th>
-                    <th class="p-4 text-sm font-medium text-gray-600">Type</th>
-                    <th class="p-4 text-sm font-medium text-gray-600">Category</th>
-                    <th class="p-4 text-sm font-medium text-gray-600">Status</th>
-                    <th class="p-4 text-sm font-medium text-gray-600">Created By</th>
-                    <th class="p-4 text-sm font-medium text-gray-600">Created</th>
-                    <th class="p-4 text-sm font-medium text-gray-600">Download</th>
-                </tr>
-            </thead>
-            <tbody>
+@empty
 
-                @forelse($posts as $post)
-                    <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
-                        <td class="p-4">{{ $post->heading }}</td>
-                        <td class="p-4 capitalize">{{ $post->latestOutput->output_type ?? 'N/A' }}</td>
-                        <td class="p-4">{{ $post->category->name ?? '-' }}</td>
-                        <td class="p-4">
-                            <button type="button" onclick="toggleStatus({{ $post->id }})"
-                                id="status-btn-{{ $post->id }}"
-                                class="px-3 py-1 text-sm rounded-full border
-                                {{ ($post->status ?? 'draft') === 'processed'
-                                    ? 'bg-green-100 text-green-700 border-green-300'
-                                    : 'bg-yellow-100 text-yellow-700 border-yellow-300' }}">
-                                {{ ucfirst($post->status ?? 'draft') }}
-                            </button>
-                        </td>
-                        <td>
-                            @if ($post->admin)
-                                {{ $post->admin->name }}
-                            @elseif($post->user)
-                                {{ $post->user->name }}
-                            @else
-                                Unknown
-                            @endif
-                        </td>
-                        <td class="p-4">{{ $post->created_at->format('d M Y') }}</td>
-                        <td class="p-4">
-                            <a href="{{ route('admin.post.download', $post->id) }}"
-                                class="text-sm text-black underline hover:text-gray-600">
-                                Preview
-                            </a>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="5" class="p-6 text-center text-gray-400">
-                            No posts available
-                        </td>
-                    </tr>
-                @endforelse
+<tr class="flex md:table-row bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-0">
+    <td colspan="7" class="w-full text-center p-8 text-gray-500 block md:table-cell">
+        No posts available
+    </td>
+</tr>
 
-            </tbody>
-        </table>
+@endforelse
 
-    </div>
+</tbody>
+</table>
 
-    <!-- Pagination -->
-    <div class="mt-6">
-        {{ $posts->links() }}
-    </div>
+<div class="hidden md:block px-4 py-3 border-t border-gray-200 bg-gray-50">
+    {{ $posts->links() }}
+</div>
 
-    <script>
-        function toggleStatus(id) {
+</div>
 
-            fetch('/admin/posts/' + id + '/toggle-status', {
-                method: "POST",
-                headers: {
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                    "Accept": "application/json"
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
+<div class="md:hidden mt-4 pb-10">
+    {{ $posts->links() }}
+</div>
 
-                const btn = document.getElementById(`status-btn-${id}`);
 
-                btn.innerText = data.label;
+<script>
 
-                if (data.status === 'processed') {
+function toggleStatus(id) {
 
-                    btn.className =
-                    "px-3 py-1 text-sm rounded-full border bg-green-100 text-green-700 border-green-300";
+fetch('/admin/posts/' + id + '/toggle-status', {
+method: "POST",
+headers: {
+"X-CSRF-TOKEN": "{{ csrf_token() }}",
+"Accept": "application/json"
+}
+})
+.then(res => res.json())
+.then(data => {
 
-                    // update stats
-                    let drafts = document.getElementById('stat-drafts');
-                    let published = document.getElementById('stat-published');
+const btn = document.getElementById(`status-btn-${id}`);
 
-                    drafts.innerText = parseInt(drafts.innerText) - 1;
-                    published.innerText = parseInt(published.innerText) + 1;
+btn.innerText = data.label;
 
-                } else {
+if (data.status === 'processed') {
 
-                    btn.className =
-                    "px-3 py-1 text-sm rounded-full border bg-yellow-100 text-yellow-700 border-yellow-300";
+btn.className =
+"px-2.5 py-0.5 rounded-full text-xs font-medium border inline-block bg-green-50 text-green-700 border-green-200";
 
-                    // update stats
-                    let drafts = document.getElementById('stat-drafts');
-                    let published = document.getElementById('stat-published');
+let drafts = document.getElementById('stat-drafts');
+let published = document.getElementById('stat-published');
 
-                    drafts.innerText = parseInt(drafts.innerText) + 1;
-                    published.innerText = parseInt(published.innerText) - 1;
+drafts.innerText = parseInt(drafts.innerText) - 1;
+published.innerText = parseInt(published.innerText) + 1;
 
-                }
+} else {
 
-            });
+btn.className =
+"px-2.5 py-0.5 rounded-full text-xs font-medium border inline-block bg-yellow-50 text-yellow-700 border-yellow-200";
 
-            }
+let drafts = document.getElementById('stat-drafts');
+let published = document.getElementById('stat-published');
 
-    </script>
+drafts.innerText = parseInt(drafts.innerText) + 1;
+published.innerText = parseInt(published.innerText) - 1;
+
+}
+
+});
+
+}
+
+</script>
 
 @endsection
