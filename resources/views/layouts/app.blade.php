@@ -18,13 +18,12 @@
         </div>
     </div>
     
-    <div class="flex min-h-screen">
-    
+    <div class="flex min-h-screen">    
         <!-- Sidebar -->
 
 
         <aside id="sidebar"
-        class="w-full md:w-64 bg-white border-r border-gray-200
+        class="w-64 bg-white border-r border-gray-200
         flex flex-col fixed inset-y-0 left-0
         transform -translate-x-full md:translate-x-0
         transition-transform duration-300 z-50">
@@ -106,7 +105,7 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 p-6 md:p-8 md:ml-64">
+        <main class="flex-1 p-6 md:p-8 pt-20 md:pt-8 md:ml-64">
 
             <!-- Top Header -->
             <div class="mb-8">

@@ -6,26 +6,49 @@ use App\Http\Controllers\Controller;
 use App\Models\News;
 use App\Models\User;
 use App\Models\NewsOutput;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // Latest posts from all users (no user filter)
-        $posts = News::with(['user', 'admin', 'category', 'latestOutput'])
-            ->latest()
-            ->paginate(10);
+        $search = request('search');
 
-        // System level stats
+
+        $posts = News::with(['user', 'admin', 'category', 'latestOutput'])
+            ->when($search, function ($query) use ($search) {
+                $query->where('heading', 'like', "%{$search}%");
+            })
+            ->latest()
+            ->paginate(4)
+            ->withQueryString();
+
         $stats = [
-            'total'     => News::count(),
-            'published' => News::where('status', 'processed')->count(),
-            'drafts'    => News::where('status', 'draft')->count(),
-            'users'     => User::count(),
+            'total'  => News::count(),
+            'images' => News::whereHas('latestOutput', fn($q) => $q->where('output_type','image'))->count(),
+            'videos' => News::whereHas('latestOutput', fn($q) => $q->where('output_type','video'))->count(),
+            'drafts' => News::where('status','draft')->count(),
         ];
 
-        return view('admin.dashboard', compact('posts', 'stats'));
+        return view('admin.dashboard', compact('posts','stats'));
     }
+
+
+
+    // Ajaxcall
+
+    public function search(Request $request)
+    {
+        $search = $request->search;
+
+        $posts = News::with(['category','latestOutput'])
+            ->where('heading', 'like', "%{$search}%")
+            ->latest()
+            ->get();
+
+        return view('_getnews', compact('posts'))->render();
+    }
+    
     public function download($id)
     {
         $media = NewsOutput::where('news_id', $id)->first();

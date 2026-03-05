@@ -34,71 +34,81 @@
 
 </div>
 
-<!-- Create Button -->
+<!-- Create Button + Search -->
 
-<div class="mb-6">
+<div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+    <!-- Create Button -->
     <a href="{{ route('posts.create') }}"
        class="inline-block bg-black text-white px-6 py-3 rounded-md shadow hover:bg-gray-800 transition">
         + Create New Post
     </a>
+
+    <!-- Search Bar -->
+    <input
+    type="text"
+    id="search"
+    placeholder="Search posts..."
+    class="w-full sm:w-72 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black">
+
 </div>
 
 <!-- Posts Table -->
 
 <div class="bg-white border border-gray-200 shadow-sm rounded-lg overflow-hidden">
 
-```
-<table class="w-full text-left text-sm md:text-base">
-    <thead class="bg-gray-50 border-b border-gray-200">
-    <tr>
-        <th class="p-4 text-sm font-medium text-gray-600">Heading</th>
-        <th class="p-4 text-sm font-medium text-gray-600">Type</th>
-        <th class="p-4 text-sm font-medium text-gray-600">Category</th>
-        <th class="p-4 text-sm font-medium text-gray-600">Status</th>
-        <th class="p-4 text-sm font-medium text-gray-600">Created</th>
-        <th class="p-4 text-sm font-medium text-gray-600">Action</th>
-    </tr>
-    </thead>
-    <tbody>
 
-    @foreach($posts as $post)
-        <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
-            <td class="p-4">{{ $post->heading }}</td>
-            <td class="p-4 capitalize">{{ $post->latestOutput->output_type ?? 'N/A' }}</td>
-            <td class="p-4">{{ $post->category->name ?? '-' }}</td>
+    <div class="w-full bg-gray-50 md:bg-white p-2 md:p-0" id="posts-container">
+        
+           
+    </div>
 
-            <!-- Status (Display Only) -->
-            <td class="p-4">
-                <span
-                    class="px-3 py-1 text-sm rounded-full border
-                    {{ ($post->status ?? 'draft') === 'publish'
-                        ? 'bg-green-100 text-green-700 border-green-300'
-                        : 'bg-yellow-100 text-yellow-700 border-yellow-300' }}">
-                    {{ ucfirst($post->status ?? 'draft') }}
-                </span>
-            </td>
-
-            <td class="p-4">{{ $post->created_at->format('d M Y') }}</td>
-
-            <td class="p-4">
-                <a href="{{ route('posts.download', $post->id) }}"
-                   class="text-sm text-black underline hover:text-gray-600">
-                    Preview
-                </a>
-            </td>
-        </tr>
-    @endforeach
-
-    </tbody>
-</table>
-```
 
 </div>
 
-<!-- Pagination -->
 
-<div class="mt-6">
-    {{ $posts->links() }}
-</div>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+    
+
+        loaddata(query='');
+
+        function loaddata(query)
+           {
+            $.ajax({
+                url: "{{ url('dashboard/search') }}",
+                type: "GET",
+                data: {
+                    search: query
+                },
+                success: function(response){
+    
+                    console.log("Controller reached");
+                    console.log(response);
+    
+                    $('#posts-container').html(response);
+    
+                },
+                error: function(xhr){
+                    console.log(xhr.responseText);
+                }
+            });
+           }
+
+        $('#search').on('keyup', function(){
+    
+            let query = $(this).val();
+    
+            console.log("Typing:", query);
+            loaddata(query);
+            
+          
+    
+        });
+    
+    });
+    </script>
 @endsection
