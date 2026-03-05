@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login - News Automation</title>
+    <title>Admin Login - News Automation</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Tailwind CDN -->
@@ -19,7 +19,7 @@
                 News Automation
             </h1>
             <p class="text-gray-500 mt-2 text-sm">
-                Log in to your account
+                Admin Log in
             </p>
         </div>
 
@@ -29,7 +29,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('login.submit') }}" class="space-y-6">
+        <form method="POST" action="{{ route('admin.login.submit') }}" class="space-y-6">
             @csrf
 
             <!-- Email -->
@@ -42,7 +42,7 @@
                     name="email"
                     required
                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition"
-                    placeholder="Enter your email"
+                    placeholder="Enter admin email"
                 >
             </div>
 
@@ -56,14 +56,18 @@
                     name="password"
                     required
                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition"
-                    placeholder="Enter your password"
+                    placeholder="Enter password"
                 >
             </div>
+
+            <!-- Back to User Login -->
             <div>
-                <a
-                 href="{{ route('admin.login') }}" 
-                 class="block text-sm font-medium text-gray-700 mb-2"> Admin login</a>
+                <a href="{{ route('login') }}" 
+                   class="block text-sm text-gray-600 hover:text-black">
+                   User login
+                </a>
             </div>
+
             <!-- Button -->
             <button 
                 type="submit"

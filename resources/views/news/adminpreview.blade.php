@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('Admin.layouts.app')
 
 @section('title', 'File Preview')
 
@@ -20,7 +20,7 @@
         </a>
 
         <div class="mt-6">
-            <a href="{{ route('dashboard') }}"
+            <a href="{{ route('admin.dashboard') }}"
                class="text-gray-600 hover:underline">
                 ← Back to Dashboard
             </a>
