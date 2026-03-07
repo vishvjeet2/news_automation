@@ -218,31 +218,37 @@ class NewsGeneratorService
             'video' => 'required|file|mimes:mp4,mov,avi,webm|max:20480',
         ]);
 
-        $heading     = $request->heading;
-        $description = $request->description;
-        $location    = $request->city;
-        $hashtag     = $request->hashtag;
+        
+
+        $heading = $request->heading;
+        $data = $request->description;
+        $location = $request->city;
+        $hashtag = $request->hashtag;
         $category_id = $request->category_id;
 
-        $catogry_name = Category::where('id', $category_id)->value('name');
+        $category_name = Category::where('id', $category_id)->value('name');
 
-        $imagePath = $this->generateVideoBackground(
-            $heading,
-            $description,
-            $location,
-            $hashtag
-        );
+        // 1️⃣ generate background image
+        $imagePath = $this->generateVideoBackground($heading, $data, $location, $hashtag);
 
-        $audioPath = $this->generateTTS($description);
+        // 2️⃣ generate audio
+        $audioPath = $this->generateTTS($data);
+
 
         if (!$audioPath || !file_exists($audioPath)) {
             abort(500, 'Audio not generated');
         }
 
+        // 3️⃣ store uploaded video
         $storedVideo = $request->file('video')->store('temp_videos', 'public');
         $videoFullPath = storage_path('app/public/' . $storedVideo);
         $extension = $request->file('video')->extension();
 
+        if (!file_exists($videoFullPath)) {
+            abort(500, 'Video missing');
+        }
+
+        // ensure output directory exists
         $outputDir = storage_path('app/public/videos');
         if (!file_exists($outputDir)) {
             mkdir($outputDir, 0755, true);
@@ -251,33 +257,24 @@ class NewsGeneratorService
         $filename = 'output_' . time() . '.mp4';
         $outputFullPath = $outputDir . '/' . $filename;
 
-        $ffmpeg = config('media.ffmpeg_path');
+        // ffmpeg path
+        $ffmpeg = 'C:\\ffmpeg\\bin\\ffmpeg.exe';
 
         $command = [
             $ffmpeg,
             '-y',
-            '-loop',
-            '1',
-            '-i',
-            $imagePath,
-            '-i',
-            $videoFullPath,
-            '-i',
-            $audioPath,
+            '-loop', '1',
+            '-i', $imagePath,
+            '-i', $videoFullPath,
+            '-i', $audioPath,
             '-filter_complex',
             "[1:v]scale=480:300[vid];[0:v][vid]overlay=(main_w-overlay_w)/2:main_h-overlay_h-110",
-            '-map',
-            '0:v',
-            '-map',
-            '2:a',
-            '-t',
-            '20',
-            '-c:v',
-            'libx264',
-            '-pix_fmt',
-            'yuv420p',
-            '-preset',
-            'veryfast',
+            '-map', '0:v',
+            '-map', '2:a',
+            '-t', '20',
+            '-c:v', 'libx264',
+            '-pix_fmt', 'yuv420p',
+            '-preset', 'veryfast',
             $outputFullPath
         ];
 
@@ -289,30 +286,30 @@ class NewsGeneratorService
             abort(500, $process->getErrorOutput());
         }
 
-        $newsData = [
+        // save news
+        $news = News::create([
             'category_id' => $category_id,
+            'user_id' => session('user_id'),
             'template_id' => $request->template_type,
-            'description' => $description,
+            'description' => $data,
             'heading' => $heading,
             'hashtag' => $hashtag,
             'place' => $location,
-            'category' => $catogry_name,
-            'news_type' => 'video',
-            'status' => 'draft'
-        ];
+            'category' => $category_name,
+        ]);
 
-        $this->assignOwnership($newsData);
-
-        $news = News::create($newsData);
-
+        // store relative path (production safe)
         $relativePath = 'videos/' . $filename;
 
+        //stores output video
         NewsOutput::create([
             'news_id' => $news->id,
             'output_type' => 'video',
             'file_path' => $relativePath,
+            'is_primary' => 1
         ]);
 
+        // stored user given video
         NewsMedia::create([
             'news_id' => $news->id,
             'file_path' => $storedVideo,
@@ -320,8 +317,9 @@ class NewsGeneratorService
         ]);
 
         return view('news.download', [
-            'image' => asset('storage/' . $relativePath)
+            'video' => asset('storage/' . $relativePath)
         ]);
+    
     }
 
     /*
@@ -372,7 +370,7 @@ class NewsGeneratorService
             return null;
         }
 
-        $savePath = storage_path('app/public/hindi_' . time() . '.mp3');
+        $savePath = storage_path('app/public/hindi.mp3');
 
         $escapedText = escapeshellarg($text);
 
@@ -429,7 +427,7 @@ class NewsGeneratorService
         } else {
             $request->validate([
                 'heading' => 'required|string|max:70',
-                'description' => 'nullable|string|max:400',
+                'description' => 'nullable|string|max:300',
                 'city' => 'required|string|max:100',
             ]);
         }

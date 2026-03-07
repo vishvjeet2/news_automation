@@ -76,25 +76,43 @@
 </head>
 <body>
 
-<div class="card">
+    <div class="card">
 
-    <h2>Your File is Ready <span class="success">✓</span></h2>
-
-    <img src="{{ asset($image) }}" alt="Generated Image">
-
-    <br>
-
-    <a href="{{ asset($image) }}" download class="btn">
-        ⬇ Download
-    </a>
-
-    <br>
-
-    <a href="{{ session()->has('admin_id') ? route('admin.dashboard') : route('dashboard') }}" class="secondary-link">
-        ← Create Another
-    </a>
-
-</div>
+        <h2>Your File is Ready <span class="success">✓</span></h2>
+    
+        {{-- If Image Generated --}}
+        @if(isset($image))
+            <img src="{{ $image }}" alt="Generated Image" class="max-w-full rounded-lg">
+    
+            <br>
+    
+            <a href="{{ $image }}" download class="btn">
+                ⬇ Download Image
+            </a>
+    
+        {{-- If Video Generated --}}
+        @elseif(isset($video))
+    
+            <video controls class="w-full rounded-lg">
+                <source src="{{ $video }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+    
+            <br>
+    
+            <a href="{{ $video }}" download class="btn">
+                ⬇ Download Video
+            </a>
+    
+        @endif
+    
+        <br>
+    
+        <a href="{{ session()->has('admin_id') ? route('admin.dashboard') : route('dashboard') }}" class="secondary-link">
+            ← Create Another
+        </a>
+    
+    </div>
 
 </body>
 </html>

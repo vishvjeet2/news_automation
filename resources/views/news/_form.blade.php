@@ -20,6 +20,24 @@
     @csrf
 
     <!--
+|----------------------------------------------------------------------------
+| Validation Error Messages
+|----------------------------------------------------------------------------
+| If validation fails in controller,
+| Laravel sends errors back to this view.
+| This block will show them on top of form.
+-->
+    @if ($errors->any())
+    <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+        <ul class="list-disc pl-5 text-sm">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
+    <!--
     |----------------------------------------------------------------------------
     | Category Selection
     |----------------------------------------------------------------------------
@@ -40,6 +58,9 @@
                 </option>
             @endforeach
         </select>
+            @error('category_id')
+                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+            @enderror
     </div>
 
     <!--
@@ -66,6 +87,9 @@
             @endforeach
 
         </select>
+        @error('template_type')
+           <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+        @enderror
     </div>
 
     <!--
@@ -144,7 +168,7 @@
             | If template type is text, increase description limit.
             */
             if (type === 'text') {
-                descriptionLimit = 400;
+                descriptionLimit = 300;
             }
 
             /*
