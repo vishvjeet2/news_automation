@@ -92,7 +92,7 @@ class NewsGeneratorService
     | - Fixed nullable image extension bug.
     | - Proper ownership handling (admin/user).
     | - Explicit news_type value.
-    | - Status automatically set to processed.
+    | - Status automatically set to draft.
     | - Separated media saving logic clearly.
     |
     */
@@ -161,11 +161,10 @@ class NewsGeneratorService
             'hashtag' => $hashtag,
             'place' => $location,
             'news_type' => 'image',
-            'status' => 'processed'
+            'status' => 'draft'
         ];
 
         $this->assignOwnership($newsData);
-
         $news = News::create($newsData);
 
         $relativePath = 'images/' . $filename;
@@ -207,7 +206,7 @@ class NewsGeneratorService
     */
 
     protected function generateVideo(Request $request)
-    {
+    {   
         $request->validate([
             'heading' => 'required|string|max:70',
             'description' => 'required|string|max:300',
@@ -292,7 +291,7 @@ class NewsGeneratorService
             'hashtag' => $hashtag,
             'place' => $location,
             'news_type' => 'video',
-            'status' => 'processed'
+            'status' => 'draft'
         ];
 
         $this->assignOwnership($newsData);
@@ -407,7 +406,7 @@ class NewsGeneratorService
 | - Moved validation here to keep controller thin.
 | - Removed category_name misuse in news_type.
 | - Added proper ownership handling.
-| - Status automatically set to processed.
+| - Status automatically set to draft.
 | - Removed user_id from NewsOutput (not needed).
 | - Standardized file path handling.
 |
@@ -423,7 +422,7 @@ class NewsGeneratorService
         } else {
             $request->validate([
                 'heading' => 'required|string|max:70',
-                'description' => 'nullable|string|max:400',
+                'description' => 'nullable|string|max:300',
                 'city' => 'required|string|max:100',
             ]);
         }
@@ -465,7 +464,7 @@ class NewsGeneratorService
             'hashtag'     => $hashtag,
             'place'       => $location,
             'news_type'   => 'text',
-            'status'      => 'processed'
+            'status'      => 'draft'
         ];
 
         $this->assignOwnership($newsData);

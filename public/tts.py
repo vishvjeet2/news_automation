@@ -17,4 +17,3 @@ os.makedirs(os.path.dirname(output_path), exist_ok=True)
 tts = gTTS(text=text, lang='hi')
 tts.save(output_path)
 
-print(output_path)  # optional (helps debugging)

@@ -14,11 +14,6 @@
         </a>
     </div>
 
-    <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-8">
-
-        <h2 class="text-xl font-semibold text-black mb-6">
-            Create Post
-        </h2>
 
         @include('news._form', [
             'route' => route('admin.post.store'),
@@ -26,7 +21,7 @@
             'templates' => $templates
         ])
 
-    </div>
+    
 
 </div>
 

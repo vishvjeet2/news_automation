@@ -71,7 +71,7 @@ Route::middleware('auth.check:user', 'no.back.history')->group(function () {
 
     Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
 
-    Route::post('/posts/generate', [PostController::class, 'newstype'])->name('posts.generate');
+    Route::post('/posts/generate', [PostController::class, 'store'])->name('posts.generate');
 
     Route::patch('/posts/{news}/status', [PostController::class, 'toggleStatus'])->name('posts.toggleStatus');
 

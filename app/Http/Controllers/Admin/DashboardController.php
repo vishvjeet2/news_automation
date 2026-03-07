@@ -14,7 +14,7 @@ class DashboardController extends Controller
         // Latest posts from all users (no user filter)
         $posts = News::with(['user', 'admin', 'category', 'latestOutput'])
             ->latest()
-            ->paginate(5);
+            ->paginate(2);
 
         // System level stats
         $stats = [

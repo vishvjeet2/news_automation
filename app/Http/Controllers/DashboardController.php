@@ -18,8 +18,8 @@ class DashboardController extends Controller
 
         $stats = [
             'total' => News::where('user_id', $userId)->count(),
-            'images' => NewsOutput::where('user_id', $userId)->where('output_type','image')->count(),
-            'videos' => NewsOutput::where('user_id', $userId)->where('output_type','video')->count(),
+            'images' => News::where('user_id', session('user_id'))->where('news_type', 'image')->count(),
+            'videos' => News::where('user_id', session('user_id'))->where('news_type','video')->count(),
             'drafts' => News::where('user_id', $userId)->where('status','draft')->count(),
         ];
 

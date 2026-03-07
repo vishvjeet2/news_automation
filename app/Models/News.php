@@ -8,6 +8,7 @@ class News extends Model
 {
     protected $fillable = [
         'user_id',
+        'admin_id',
         'category_id',
         'template_id',
         'description',
