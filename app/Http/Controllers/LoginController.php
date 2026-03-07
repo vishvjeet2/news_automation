@@ -22,17 +22,22 @@ class LoginController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if ($user && Hash::check($request->password, $user->password)) {
+        
 
-            session([
-                'user_id' => $user->id,
-                'user_name' => $user->name
-            ]);
-
-            return redirect('/dashboard');
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return back()->with('error', 'Invalid Credentials');
+            
         }
 
-        return back()->with('error', 'Invalid Credentials');
+        session([
+            'user_id' => $user->id,
+            'user_name' => $user->name
+        ]);
+
+        // dd(session()->all());
+
+        return redirect('/dashboard');
+
     }
 
     public function logout()

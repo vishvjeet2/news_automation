@@ -4,153 +4,142 @@
 
 @section('content')
 
-    <!-- Stats -->
-    <div class="grid grid-cols-4 gap-6 mb-8">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.tailwindcss.min.css">
 
-        <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6">
-            <p class="text-sm text-gray-500">Total Posts</p>
-            <p id="stat-total" class="text-2xl font-semibold text-black mt-2">{{ $stats['total'] }}</p>
-        </div>
-    
-        <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6">
-            <p class="text-sm text-gray-500">Published</p>
-            <p id="stat-published" class="text-2xl font-semibold text-black mt-2">{{ $stats['published'] }}</p>
-        </div>
-    
-        <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6">
-            <p class="text-sm text-gray-500">Drafts</p>
-            <p id="stat-drafts" class="text-2xl font-semibold text-black mt-2">{{ $stats['drafts'] }}</p>
-        </div>
-    
-        <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6">
-            <p class="text-sm text-gray-500">Users</p>
-            <p id="stat-users" class="text-2xl font-semibold text-black mt-2">{{ $stats['users'] }}</p>
-        </div>
-    
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.tailwindcss.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+
+    <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6">
+        <p class="text-sm text-gray-500 font-medium">Total Posts</p>
+        <p id="stat-total" class="text-2xl font-bold text-gray-900 mt-2">{{ $stats['total'] }}</p>
     </div>
 
-    <!-- Create Button -->
-    <div class="mb-6">
-        <a href="{{ route('admin.posts.create') }}"
-            class="inline-block bg-black text-white px-6 py-3 rounded-md shadow hover:bg-gray-800 transition">
-            + Create New Post
-        </a>
+    <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6">
+        <p class="text-sm text-gray-500 font-medium">Published</p>
+        <p id="stat-published" class="text-2xl font-bold text-gray-900 mt-2">{{ $stats['published'] }}</p>
     </div>
 
-    <!-- Latest Posts Table (All Users) -->
-    <div class="bg-white border border-gray-200 shadow-sm rounded-lg overflow-hidden">
-
-        <table class="w-full text-left">
-            <thead class="bg-gray-50 border-b border-gray-200">
-                <tr>
-                    <th class="p-4 text-sm font-medium text-gray-600">Heading</th>
-                    <th class="p-4 text-sm font-medium text-gray-600">Type</th>
-                    <th class="p-4 text-sm font-medium text-gray-600">Category</th>
-                    <th class="p-4 text-sm font-medium text-gray-600">Status</th>
-                    <th class="p-4 text-sm font-medium text-gray-600">Created By</th>
-                    <th class="p-4 text-sm font-medium text-gray-600">Created</th>
-                    <th class="p-4 text-sm font-medium text-gray-600">Download</th>
-                </tr>
-            </thead>
-            <tbody>
-
-                @forelse($posts as $post)
-                    <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
-                        <td class="p-4">{{ $post->heading }}</td>
-                        <td class="p-4 capitalize">{{ $post->latestOutput->output_type ?? 'N/A' }}</td>
-                        <td class="p-4">{{ $post->category->name ?? '-' }}</td>
-                        <td class="p-4">
-                            <button type="button" onclick="toggleStatus({{ $post->id }})"
-                                id="status-btn-{{ $post->id }}"
-                                class="px-3 py-1 text-sm rounded-full border
-                                {{ ($post->status ?? 'draft') === 'processed'
-                                    ? 'bg-green-100 text-green-700 border-green-300'
-                                    : 'bg-yellow-100 text-yellow-700 border-yellow-300' }}">
-                                {{ ucfirst($post->status ?? 'draft') }}
-                            </button>
-                        </td>
-                        <td>
-                            @if ($post->admin)
-                                {{ $post->admin->name }}
-                            @elseif($post->user)
-                                {{ $post->user->name }}
-                            @else
-                                Unknown
-                            @endif
-                        </td>
-                        <td class="p-4">{{ $post->created_at->format('d M Y') }}</td>
-                        <td class="p-4">
-                            <a href="{{ route('admin.post.download', $post->id) }}"
-                                class="text-sm text-black underline hover:text-gray-600">
-                                Preview
-                            </a>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="5" class="p-6 text-center text-gray-400">
-                            No posts available
-                        </td>
-                    </tr>
-                @endforelse
-
-            </tbody>
-        </table>
-
+    <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6">
+        <p class="text-sm text-gray-500 font-medium">Drafts</p>
+        <p id="stat-drafts" class="text-2xl font-bold text-gray-900 mt-2">{{ $stats['drafts'] }}</p>
     </div>
 
-    <!-- Pagination -->
-    <div class="mt-6">
-        {{ $posts->links() }}
+    <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-6">
+        <p class="text-sm text-gray-500 font-medium">Users</p>
+        <p id="stat-users" class="text-2xl font-bold text-gray-900 mt-2">{{ $stats['users'] }}</p>
     </div>
 
-    <script>
-        function toggleStatus(id) {
+</div>
 
-            fetch('/admin/posts/' + id + '/toggle-status', {
-                method: "POST",
-                headers: {
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                    "Accept": "application/json"
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
 
-                const btn = document.getElementById(`status-btn-${id}`);
+<!-- Action Bar -->
+<div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
-                btn.innerText = data.label;
+    <a href="{{ route('admin.posts.create') }}"
+    class="inline-block bg-black text-white px-6 py-3 rounded-md shadow hover:bg-gray-800 transition">
+        + Create New Post
+    </a>
 
-                if (data.status === 'processed') {
 
-                    btn.className =
-                    "px-3 py-1 text-sm rounded-full border bg-green-100 text-green-700 border-green-300";
+</div>
 
-                    // update stats
-                    let drafts = document.getElementById('stat-drafts');
-                    let published = document.getElementById('stat-published');
 
-                    drafts.innerText = parseInt(drafts.innerText) - 1;
-                    published.innerText = parseInt(published.innerText) + 1;
+<!-- Responsive Table -->
+<div class="w-full md:bg-white md:border md:border-gray-200 md:shadow-sm md:rounded-lg md:overflow-x-auto ">
 
-                } else {
+    <div class="w-full overflow-x-auto">
+        @include('Admin._getnewsadmin')
+    </div>
 
-                    btn.className =
-                    "px-3 py-1 text-sm rounded-full border bg-yellow-100 text-yellow-700 border-yellow-300";
+</div>
 
-                    // update stats
-                    let drafts = document.getElementById('stat-drafts');
-                    let published = document.getElementById('stat-published');
 
-                    drafts.innerText = parseInt(drafts.innerText) + 1;
-                    published.innerText = parseInt(published.innerText) - 1;
 
-                }
+<script>
 
-            });
+function toggleStatus(id) {
+    
+    fetch('/admin/posts/' + id + '/toggle-status', {
+    
+    method: "POST",
+    
+    headers: {
+    
+        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+        
+        "Accept": "application/json"
+        
+    }
+    
+    })
+    
+    .then(res => res.json())
+    
+    .then(data => {
+    
+        const btn = document.getElementById(`status-btn-${id}`);
+        
+        btn.innerText = data.label;
+        
+        if (data.status === 'processed') {
+        
+            btn.className =
+            "px-2.5 py-1 rounded-full text-xs font-medium border bg-green-50 text-green-700 border-green-200";
+            
+            let drafts = document.getElementById('stat-drafts');
+            let published = document.getElementById('stat-published');
+            
+            drafts.innerText = parseInt(drafts.innerText) - 1;
+            published.innerText = parseInt(published.innerText) + 1;
+        
+        } else {
+        
+            btn.className =
+            "px-2.5 py-1 rounded-full text-xs font-medium border bg-yellow-50 text-yellow-700 border-yellow-200";
+            
+            let drafts = document.getElementById('stat-drafts');
+            let published = document.getElementById('stat-published');
+            
+            drafts.innerText = parseInt(drafts.innerText) + 1;
+            published.innerText = parseInt(published.innerText) - 1;
+        
+        }
+    
+    });
 
-            }
+}
+    
+$(document).ready(function(){
 
-    </script>
+    $('#adminPostsTable').DataTable({
+
+        pageLength: 5,
+        lengthChange: false,
+        ordering: true,
+        responsive: true,
+
+        dom:
+        "<'flex justify-between items-center mb-4'f>" +
+        "t" +
+        "<'flex justify-between items-center mt-4 text-sm'i'p>",
+
+        language:{
+            search:"",
+            searchPlaceholder:"Search posts..."
+        }
+
+    });
+
+});
+
+</script>
 
 @endsection

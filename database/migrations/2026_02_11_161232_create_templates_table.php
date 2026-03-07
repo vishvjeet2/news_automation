@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('templates', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->enum('type',['image','video']);
+            $table->enum('type',['image','video','text']);
             $table->string('template_path');
             $table->string('config')->nullable();
             $table->timestamps();

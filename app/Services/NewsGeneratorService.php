@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\News;
 use App\Models\NewsOutput;
@@ -100,9 +101,9 @@ class NewsGeneratorService
     protected function generateImage(Request $request)
     {
         $request->validate([
-            'heading' => 'required|string|max:60',
+            'heading' => 'required|string|max:70',
             'description' => 'required|string|max:300',
-            'city' => 'required|string|max:100',
+            'city' => 'required|string|max:15',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
@@ -111,6 +112,8 @@ class NewsGeneratorService
         $location     = $request->city;
         $hashtag      = $request->hashtag;
         $category_id  = $request->category_id;
+
+        $catogry_name = Category::where('id', $category_id)->value('name');
 
         $photoPath = null;
         $stored = null;
@@ -160,8 +163,9 @@ class NewsGeneratorService
             'heading' => $heading,
             'hashtag' => $hashtag,
             'place' => $location,
+            'category' => $catogry_name,
             'news_type' => 'image',
-            'status' => 'processed'
+            'status' => 'draft'
         ];
 
         $this->assignOwnership($newsData);
@@ -176,13 +180,12 @@ class NewsGeneratorService
             'file_path' => $relativePath,
         ]);
 
-        if ($stored) {
-            NewsMedia::create([
-                'news_id' => $news->id,
-                'file_path' => $stored,
-                'file_type' => $extension
-            ]);
-        }
+        NewsMedia::create([
+            'news_id' => $news->id,
+            'file_path' => $stored,
+            'file_type' => $extension
+        ]);
+        
 
         return view('news.download', [
             'image' => asset('storage/' . $relativePath),
@@ -220,6 +223,8 @@ class NewsGeneratorService
         $location    = $request->city;
         $hashtag     = $request->hashtag;
         $category_id = $request->category_id;
+
+        $catogry_name = Category::where('id', $category_id)->value('name');
 
         $imagePath = $this->generateVideoBackground(
             $heading,
@@ -291,8 +296,9 @@ class NewsGeneratorService
             'heading' => $heading,
             'hashtag' => $hashtag,
             'place' => $location,
+            'category' => $catogry_name,
             'news_type' => 'video',
-            'status' => 'processed'
+            'status' => 'draft'
         ];
 
         $this->assignOwnership($newsData);
@@ -434,6 +440,8 @@ class NewsGeneratorService
         $hashtag      = $request->hashtag;
         $category_id  = $request->category_id;
 
+        $catogry_name = Category::where('id', $category_id)->value('name');
+
         $templatePath = storage_path('app/public/templates/news_frame.jpeg');
 
         $html = view('news.newstext', [
@@ -464,8 +472,9 @@ class NewsGeneratorService
             'heading'     => $heading,
             'hashtag'     => $hashtag,
             'place'       => $location,
-            'news_type'   => 'text',
-            'status'      => 'processed'
+            'category'   => $catogry_name,
+            'news_type'  => 'text',
+            'status'      => 'draft'
         ];
 
         $this->assignOwnership($newsData);

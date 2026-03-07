@@ -114,6 +114,9 @@
             // Detect template type
             let type = selected.getAttribute('data-type');
 
+            // Default heading limit
+            let headingLimit = 70;
+
             /*
             |----------------------------------------------------------------------------
             | Heading Field (Always Visible)
@@ -126,10 +129,13 @@
                        maxlength="70"
                        class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-black">
             </div>
+            <p class="text-xs text-gray-500 mt-1">
+                    Maximum ${headingLimit} characters allowed.
+            </p>
         `;
 
             // Default description limit
-            let descriptionLimit = 300;
+            let descriptionLimit = 200;
 
             /*
             |----------------------------------------------------------------------------
@@ -176,6 +182,19 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
                 <input type="text" name="city"
+                       maxlength="15"
+                       class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-black">
+            </div>
+        `;
+            /*
+            |----------------------------------------------------------------------------
+            | City Field (Always Visible)
+            |----------------------------------------------------------------------------
+            */
+            fields += `
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">hashtag</label>
+                <input type="text" name="hashtag"
                        maxlength="20"
                        class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-black">
             </div>

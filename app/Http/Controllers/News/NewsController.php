@@ -129,7 +129,7 @@ class NewsController extends Controller
             'heading' => $heading,
             'hashtag' => $hashtag,
             'place' => $location,
-            'news_type' => $category_name,
+            'category' => $category_name,
         ]);
 
         // store relative path (production safe)
@@ -222,7 +222,7 @@ class NewsController extends Controller
             'heading' => $heading,
             'hashtag' => $hashtag,
             'place' => $location,
-            'news_type' => $category_name,
+            'category' => $category_name,
         ]);
 
         // store relative path (production safe)
@@ -305,7 +305,7 @@ class NewsController extends Controller
             'heading' => $heading,
             'hashtag' => $hashtag,
             'place' => $location,
-            'news_type' => $catogry_name,
+            'category' => $catogry_name,
         ]);
     
         // ✅ Store PUBLIC path (IMPORTANT)

@@ -6,6 +6,49 @@
     <title>News Automation</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.tailwindcss.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.tailwindcss.min.js"></script>
+    <style>
+
+        .dataTables_filter input{
+        border:1px solid #d1d5db;
+        border-radius:8px;
+        padding:8px 12px;
+        margin-left:8px;
+        outline:none;
+        }
+        
+        .dataTables_filter input:focus{
+        border-color:black;
+        box-shadow:0 0 0 2px rgba(0,0,0,0.1);
+        }
+
+        .dataTables_paginate{
+        display:flex;
+        gap:6px;
+        }
+
+        .dataTables_paginate .paginate_button{
+        border:1px solid #e5e7eb;
+        padding:6px 12px;
+        border-radius:6px;
+        background:white;
+        }
+
+        .dataTables_paginate .paginate_button.current{
+        background:#111827;
+        color:white !important;
+        border-color:#111827;
+        }
+
+        .dataTables_paginate .paginate_button:hover{
+        background:#f3f4f6;
+        }
+        
+        </style>
 </head>
 
 <body class="bg-gray-100 min-h-screen">

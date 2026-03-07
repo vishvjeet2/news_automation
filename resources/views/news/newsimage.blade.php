@@ -144,7 +144,7 @@
         </div>
 
         <div class="text">
-            {{ $data }}
+            {{ $description }}
         </div>
 
         <div class="photo">

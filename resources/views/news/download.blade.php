@@ -90,7 +90,7 @@
 
     <br>
 
-    <a href="{{ route('dashboard') }}" class="secondary-link">
+    <a href="{{ session()->has('admin_id') ? route('admin.dashboard') : route('dashboard') }}" class="secondary-link">
         ← Create Another
     </a>
 

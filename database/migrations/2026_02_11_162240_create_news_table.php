@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('news', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('admin_id')->nullable()->constrained('admins')->nullOnDelete();
+            $table->foreignId('admin_id')->nullable()->constrained('admin')->nullOnDelete();
             $table->foreignId('user_id')->nullable()->constrained('users')->cascadeOnDelete();
             $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
             $table->foreignId('template_id')->constrained('templates')->cascadeOnDelete();
@@ -22,6 +22,7 @@ return new class extends Migration
             $table->text('hashtag');
             $table->date('news_date');
             $table->string('place');
+            $table->string('category');
             $table->string('news_type');
             $table->enum('status',['draft','processed'])->default('draft');
             $table->string('audio_path')->nullable();

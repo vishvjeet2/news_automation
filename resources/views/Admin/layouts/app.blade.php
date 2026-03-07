@@ -22,10 +22,8 @@
 
 
                 <aside id="sidebar"
-                class="w-full md:w-64 bg-white border-r border-gray-200
-                flex flex-col fixed inset-y-0 left-0
-                transform -translate-x-full md:translate-x-0
-                transition-transform duration-300 z-50">
+                class="w-64 bg-white border-r border-gray-200 flex flex-col fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 z-50">
+                
                     <!-- Mobile Close Button -->
                     <div class="md:hidden flex justify-end p-4 border-b">
                         <button onclick="toggleSidebar()" class="text-2xl leading-none">
@@ -125,7 +123,7 @@
                 </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 p-6 md:p-8 md:ml-64">
+    <main class="flex-1 p-6 md:p-8 md:ml-64 pt-16 md:pt-8">
 
         <div class="mb-8">
             <h1 class="text-2xl font-semibold text-black">
