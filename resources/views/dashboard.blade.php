@@ -44,13 +44,6 @@
         + Create New Post
     </a>
 
-    <!-- Search Bar -->
-    <input
-    type="text"
-    id="search"
-    placeholder="Search posts..."
-    class="w-full sm:w-72 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black">
-
 </div>
 
 <!-- 3. Responsive Table Container -->
@@ -58,16 +51,16 @@
     Mobile: Transparent background (so cards 'float'), no border.
     Desktop: White background, bordered, rounded (standard table look).
 -->
-<div class="w-full md:bg-white md:border md:border-gray-200 md:shadow-sm md:rounded-lg md:overflow-hidden">
 
-    <div class="w-full bg-gray-50 md:bg-white p-2 md:p-0">
+
+    <div class="w-full">
 
         @include('_getnews')
         
     </div>
 
 
-</div>
+
 
 
 
@@ -86,18 +79,24 @@
         
             pageLength: 10,
             lengthChange: false,
+            ordering: true,
+
+            responsive: false, 
+            scrollX: false,
+            autoWidth: false,
             
             dom:
-            "<'flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4'<'flex items-center'f>>" +
-            "t" +
-            "<'flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-4'<'text-sm text-gray-500'i><'pagination'p>>",
+            "<'flex flex-col sm:flex-row justify-between items-center mb-4 gap-4'f>" +
+             "t" +
+             "<'flex flex-col sm:flex-row justify-between items-center mt-6 gap-4 text-sm'i'p>",
             
             language: {
                 search: "",
                 searchPlaceholder: "Search posts...",
+                info: "Showing _START_ to _END_ of _TOTAL_ posts",
                 paginate: {
-                    previous: "Prev",
-                    next: "Next"
+                    next: 'Next >',
+                    previous: '< Prev'
                 }
             }
         

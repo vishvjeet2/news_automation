@@ -4,12 +4,12 @@
         
         <thead class=" hidden md:table-header-group bg-gray-50 border-b border-gray-200">
         <tr>
-        <th class="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Heading</th>
-        <th class="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Type</th>
-        <th class="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
-        <th class="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-        <th class="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Created</th>
-        <th class="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Download</th>
+        <th class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Heading</th>
+        <th class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Type</th>
+        <th class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Category</th>
+        <th class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+        <th class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Created</th>
+        <th class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Download</th>
         </tr>
         </thead>
         
@@ -53,7 +53,7 @@
         
                 <td class="block md:table-cell p-4 md:p-4 border-b md:border-b-0 border-gray-100 flex justify-between md:table-cell">
                     <span class="md:hidden font-bold text-gray-600 text-xs uppercase">Category:</span>
-                    <span>{{ $post->category ?? '-' }}</span>
+                    <span>{{ $post->category->name ?? '-' }}</span>
                 </td>
 
             <!--
@@ -66,13 +66,13 @@
             <span class="md:hidden font-bold text-gray-600 text-xs uppercase">Status:</span>
         @if(($post->status ?? 'draft') == 'processed')
         
-        <span class="px-2.5 py-1 rounded-full text-xs font-medium border">
+        <span class="px-2.5 py-1 rounded-full text-xs font-medium border bg-green-100 text-green-800 border-green-300">
         Processed
         </span>
         
         @else
         
-        <span class="px-2.5 py-1 rounded-full text-xs font-medium border bg-yellow-50 text-yellow-700 border-yellow-200">
+        <span class="px-2.5 py-1 rounded-full text-xs font-medium border bg-yellow-100 text-yellow-800 border-yellow-300">
         Draft
         </span>
         
@@ -100,7 +100,7 @@
         <td class="block md:table-cell p-4 md:p-4 border-gray-100 flex justify-between md:table-cell">
             <span class="md:hidden font-bold text-gray-600 text-xs uppercase">Action:</span>
         <a href="{{ route('posts.download',$post->id) }}"
-            class="text-blue-600 hover:underline">
+            class="font-bold text-blue-600 hover:underline">
         Preview
         </a>
         </td>

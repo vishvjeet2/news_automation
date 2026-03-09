@@ -4,13 +4,13 @@
         <!-- HEADER: Hidden on mobile, visible on MD+ -->
         <thead class="hidden md:table-header-group bg-gray-50 border-b border-gray-200">
             <tr>
-                <th class="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Heading</th>
-                <th class="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Type</th>
-                <th class="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
-                <th class="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                <th class="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Created By</th>
-                <th class="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Created</th>
-                <th class="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Download</th>
+                <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Heading</th>
+                <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Type</th>
+                <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Category</th>
+                <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+                <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Created By</th>
+                <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
+                <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Action</th>
             </tr>
         </thead>
 
@@ -44,7 +44,7 @@
                 <!-- COLUMN 3: Category -->
                 <td class="block md:table-cell p-4 md:p-4 border-b md:border-b-0 border-gray-100 flex justify-between md:table-cell">
                     <span class="md:hidden font-bold text-gray-600 text-xs uppercase">Category:</span>
-                    <span>{{ $post->category ?? '-' }}</span>
+                    <span>{{ $post->category->name ?? '-' }}</span>
                 </td>
 
                 <!-- COLUMN 4: Status -->
@@ -53,8 +53,8 @@
                     <button onclick="toggleStatus({{ $post->id }})" id="status-btn-{{ $post->id }}" 
                         class="px-2.5 py-1 rounded-full text-xs font-medium border
                         {{ ($post->status ?? 'draft') === 'processed'
-                        ? 'bg-green-50 text-green-700 border-green-200'
-                        : 'bg-yellow-50 text-yellow-700 border-yellow-200' }}">
+                        ? 'bg-green-100 text-green-800 border-green-300'
+                        : 'bg-yellow-100 text-yellow-800 border-yellow-300' }}">
                         {{ ucfirst($post->status ?? 'draft') }}
                     </button>
                 </td>
@@ -74,7 +74,7 @@
                 <!-- COLUMN 7: Actions -->
                 <td class="block md:table-cell p-4 md:p-4 border-gray-100 flex justify-between md:table-cell">
                     <span class="md:hidden font-bold text-gray-600 text-xs uppercase">Action:</span>
-                    <a href="{{ route('admin.post.download',$post->id) }}" class="text-blue-600 hover:underline">Preview</a>
+                    <a href="{{ route('admin.post.download',$post->id) }}" class="text-blue-600 font-bold hover:underline">Preview</a>
                 </td>
 
             </tr>
