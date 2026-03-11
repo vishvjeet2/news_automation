@@ -53,7 +53,7 @@
         
                 <td class="block md:table-cell p-4 md:p-4 border-b md:border-b-0 border-gray-100 flex justify-between md:table-cell">
                     <span class="md:hidden font-bold text-gray-600 text-xs uppercase">Category:</span>
-                    <span>{{ $post->category->name ?? '-' }}</span>
+                    <span>{{ $post->category ?? '-' }}</span>
                 </td>
 
             <!--
