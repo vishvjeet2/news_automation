@@ -63,25 +63,20 @@
             @enderror
     </div>
 
-    <!--
-    |----------------------------------------------------------------------------
-    | Template Selection
-    |----------------------------------------------------------------------------
-    | When template changes, dynamic fields will be generated using JS.
-    | data-type is used to detect text/image/video template.
-    -->
+
+    {{-- this div is for selecting the templete --}}
     <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">
             Select Template
         </label>
 
-        <select id="templateType" name="template_type" required
+        <select id="" name="template_type" required
             class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-black">
 
             <option value="">-- Select Template --</option>
 
             @foreach ($templates as $template)
-                <option value="{{ $template->id }}" data-type="{{ $template->type }}">
+                <option value="{{ $template->id }}">
                     {{ $template->name }}
                 </option>
             @endforeach
@@ -91,6 +86,37 @@
            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
         @enderror
     </div>
+
+    <!--
+    |----------------------------------------------------------------------------
+    | News type selection.
+    |----------------------------------------------------------------------------
+    | When template changes, dynamic fields will be generated using JS.
+    | data-type is used to detect text/image/video template.
+    -->
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+            Select News Type
+        </label>
+
+        <select id="templateType" name="news_type" required
+            class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-black">
+
+            <option value="">-- Select Template --</option>
+                <option value="image" data-type="image">
+                    Template with image
+                </option>
+                <option value="video" data-type="video">
+                    Template with video
+                </option>
+                <option value="text" data-type="text">
+                    Template with text
+                </option>
+
+        </select>
+    </div>
+
+    
 
     <!--
     |----------------------------------------------------------------------------
@@ -139,7 +165,7 @@
             let type = selected.getAttribute('data-type');
 
             // Default heading limit
-            let headingLimit = 70;
+            let headingLimit = 200;
 
             /*
             |----------------------------------------------------------------------------
@@ -150,7 +176,7 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Heading</label>
                 <input type="text" name="heading"
-                       maxlength="70"
+                       maxlength="200"
                        class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-black">
             </div>
             <p class="text-xs text-gray-500 mt-1">
@@ -176,26 +202,29 @@
             | Description Field + Character Counter
             |----------------------------------------------------------------------------
             */
-            fields += `
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Description
-                </label>
+           if (type == 'text') {
+                fields += `
+                <div id='description'>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Description
+                    </label>
 
-                <textarea name="description"
-                          maxlength="${descriptionLimit}"
-                          id="descriptionField"
-                          class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-black"></textarea>
+                    <textarea name="description"
+                            maxlength="${descriptionLimit}"
+                            id="descriptionField"
+                            class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-black" ></textarea>
 
-                <p class="text-xs text-gray-500 mt-1">
-                    Maximum ${descriptionLimit} characters allowed.
-                </p>
+                    <p class="text-xs text-gray-500 mt-1" >
+                        Maximum ${descriptionLimit} characters allowed.
+                    </p>
 
-                <p id="charCount" class="text-xs text-gray-400 mt-1">
-                    0 / ${descriptionLimit}
-                </p>
-            </div>
-        `;
+                    <p id="charCount" class="text-xs text-gray-400 mt-1" >
+                        0 / ${descriptionLimit}
+                    </p>
+                </div>
+            `;
+           }
+            
 
             /*
             |----------------------------------------------------------------------------
@@ -234,7 +263,7 @@
                 fields += `
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Upload Image</label>
-                    <input type="file" name="image"
+                    <input type="file" name="image[]" multiple
                            class="w-full border border-gray-300 rounded-md px-4 py-2">
                 </div>
             `;
