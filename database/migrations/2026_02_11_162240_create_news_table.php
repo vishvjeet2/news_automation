@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
             $table->foreignId('template_id')->constrained('templates')->cascadeOnDelete();
             $table->text('heading');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->text('hashtag');
             $table->date('news_date');
             $table->string('place');

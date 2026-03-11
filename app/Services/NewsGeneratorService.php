@@ -64,18 +64,18 @@ class NewsGeneratorService
 
     public function generate(Request $request)
     {
-        $template = Template::findOrFail($request->template_type);
+        $news_type = $request->news_type;
 
-        switch ($template->type) {
+        switch ($news_type) {
 
             case 'image':
-                return $this->generateImage($request, $template);
+                return $this->generateImage($request);
 
             case 'video':
-                return $this->generateVideo($request, $template);
+                return $this->generateVideo($request);
 
             case 'text':
-                return $this->generateText($request, $template);
+                return $this->generateText($request);
 
             default:
                 abort(400, 'Invalid template type');
@@ -101,10 +101,10 @@ class NewsGeneratorService
     protected function generateImage(Request $request)
     {
         $request->validate([
-            'heading' => 'required|string|max:70',
-            'description' => 'required|string|max:300',
+            'heading' => 'required|string|max:200',
             'city' => 'required|string|max:15',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'image' => 'nullable|array',
+            'image.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $heading      = $request->heading;
@@ -115,30 +115,36 @@ class NewsGeneratorService
 
         $catogry_name = Category::where('id', $category_id)->value('name');
 
-        $photoPath = null;
-        $stored = null;
+        $photoPaths = [];
+        $storedFiles = [];
 
         if ($request->hasFile('image')) {
-            $stored = $request->file('image')->store('temp', 'public');
 
-            $photoFullPath = storage_path('app/public/' . $stored);
-            $photoPath = 'data:image/jpeg;base64,' .
-                base64_encode(file_get_contents($photoFullPath));
+            foreach ($request->file('image') as $file) {
+
+                $stored = $file->store('temp', 'public');
+                $storedFiles[] = [
+                    'path' => $stored,
+                    'extension' => $file->extension()
+                ];
+
+                $photoFullPath = storage_path('app/public/' . $stored);
+
+                $photoPaths[] = 'data:image/jpeg;base64,' .
+                    base64_encode(file_get_contents($photoFullPath));
+            }
         }
 
-        $extension = $request->hasFile('image')
-            ? $request->file('image')->extension()
-            : null;
+        $templatePath = Template::where('id', $request->template_type)
+                        ->value('template_path');
 
-        $templatePath = storage_path('app/public/templates/news_frame.jpeg');
-        $template = 'data:image/jpeg;base64,' .
-            base64_encode(file_get_contents($templatePath));
+        $template = storage_path('app/public/' . $templatePath);
 
         $html = view('news.newsimage', compact(
             'description',
             'heading',
             'template',
-            'photoPath',
+            'photoPaths',
             'location',
             'hashtag'
         ))->render();
@@ -153,7 +159,7 @@ class NewsGeneratorService
         $absolutePath = $directory . '/' . $filename;
 
         Browsershot::html($html)
-            ->windowSize(800, 1000)
+            ->windowSize(800,1000)
             ->save($absolutePath);
 
         $newsData = [
@@ -180,16 +186,19 @@ class NewsGeneratorService
             'file_path' => $relativePath,
         ]);
 
-        NewsMedia::create([
-            'news_id' => $news->id,
-            'file_path' => $stored,
-            'file_type' => $extension
-        ]);
-        
+        /* store multiple media */
+        foreach ($storedFiles as $file) {
+
+            NewsMedia::create([
+                'news_id' => $news->id,
+                'file_path' => $file['path'],
+                'file_type' => $file['extension']
+            ]);
+        }
 
         return view('news.download', [
             'image' => asset('storage/' . $relativePath),
-            'newsID' => $news->id
+            // 'newsID' => $news->id
         ]);
     }
 
@@ -212,8 +221,7 @@ class NewsGeneratorService
     protected function generateVideo(Request $request)
     {
         $request->validate([
-            'heading' => 'required|string|max:70',
-            'description' => 'required|string|max:300',
+            'heading' => 'required|string|max:200',
             'city' => 'required|string|max:20',
             'video' => 'required|file|mimes:mp4,mov,avi,webm|max:20480',
         ]);
@@ -228,8 +236,13 @@ class NewsGeneratorService
 
         $category_name = Category::where('id', $category_id)->value('name');
 
+        $templatePath = Template::where('id', $request->template_type)
+                        ->value('template_path');
+
+        $template = storage_path('app/public/' . $templatePath);
+
         // 1️⃣ generate background image
-        $imagePath = $this->generateVideoBackground($heading, $data, $location, $hashtag);
+        $imagePath = $this->generateVideoBackground($heading, $data, $location, $hashtag, $template);
 
         // 2️⃣ generate audio
         $audioPath = $this->generateTTS($data);
@@ -328,14 +341,9 @@ class NewsGeneratorService
     |--------------------------------------------------------------------------
     */
 
-    protected function generateVideoBackground($heading, $description, $location, $hashtag)
+    protected function generateVideoBackground($heading, $description, $location, $hashtag, $template)
     {
-        $templatePath = storage_path('app/public/templates/news_frame.jpeg');
-
-        $template = 'data:image/jpeg;base64,' .
-            base64_encode(file_get_contents($templatePath));
-
-        $html = view('news.newsvideo', [
+            $html = view('news.newsvideo', [
             'data' => $description,
             'heading' => $heading,
             'template' => $template,
@@ -426,8 +434,8 @@ class NewsGeneratorService
             ]);
         } else {
             $request->validate([
-                'heading' => 'required|string|max:70',
-                'description' => 'nullable|string|max:300',
+                'heading' => 'required|string|max:200',
+                'description' => 'nullable|max:300',
                 'city' => 'required|string|max:100',
             ]);
         }
@@ -440,12 +448,15 @@ class NewsGeneratorService
 
         $catogry_name = Category::where('id', $category_id)->value('name');
 
-        $templatePath = storage_path('app/public/templates/news_frame.jpeg');
+        $templatePath = Template::where('id', $request->template_type)
+                        ->value('template_path');
+
+        $template = storage_path('app/public/' . $templatePath);
 
         $html = view('news.newstext', [
             'data'     => $description,
             'heading'  => $heading,
-            'template' => $templatePath,
+            'template' => $template,
             'location' => $location,
             'hashtag'  => $hashtag
         ])->render();
