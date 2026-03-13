@@ -49,6 +49,8 @@ Route::prefix('admin')
     
     Route::get('/dashboard/search',[AdminDashboardController::class,'search'])->name('admin.dashboard.search');
 
+    Route::get('/posts/data', [AdminPostController::class,'datatable']);
+
     Route::get('/posts/create', [AdminPostController::class,'create'])->name('admin.posts.create');
     Route::post('/posts/{news}/toggle-status', [AdminPostController::class, 'toggleStatus']);
     Route::get('/categories',[CategoryController::class,'index'])->name('admin.categories.index');

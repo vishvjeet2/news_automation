@@ -8,6 +8,7 @@ use App\Models\Template;
 use App\Models\News;
 use Illuminate\Http\Request;
 use App\Services\NewsGeneratorService;
+use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
@@ -106,5 +107,66 @@ class PostController extends Controller
             'status' => $news->status,
             'label'  => ucfirst($news->status),
         ]);
+    }
+
+    public function datatable(Request $request)
+    {
+
+        $draw = $request->draw;
+        $start = $request->start;
+        $length = $request->length;
+
+        $query = News::with(['admin','user']);
+
+        $totalRecords = $query->count();
+
+        $posts = $query->skip($start)
+                    ->take($length)
+                    ->latest()
+                    ->get();
+
+        $data = [];
+
+        foreach($posts as $post){
+
+            $statusClass = ($post->status ?? 'draft') === 'processed'
+            ? 'bg-green-100 text-green-800 border-green-300'
+            : 'bg-yellow-100 text-yellow-800 border-yellow-300';
+
+            $data[] = [
+
+                'heading' => $post->heading,
+
+                'news_type' => $post->news_type ?? 'N/A',
+
+                'category' => $post->category ?? '-',
+
+                'status' => '
+                    <button 
+                    id="status-btn-'.$post->id.'"
+                    onclick="toggleStatus('.$post->id.')" 
+                    class="px-2.5 py-1 rounded-full text-xs font-medium border '.$statusClass.'">
+                        '.ucfirst($post->status ?? 'draft').'
+                    </button>
+                    ',
+
+                'created_by' => $post->admin->name ?? $post->user->name ?? 'Unknown',
+
+                'date' => $post->created_at->format('d M Y'),
+
+                'action' => '<a href="'.route('admin.post.download',$post->id).'" 
+                class="text-blue-600 font-bold hover:underline">Preview</a>'
+
+            ];
+
+        }
+
+        return response()->json([
+            "draw"=>intval($draw),
+            "recordsTotal"=>$totalRecords,
+            "recordsFiltered"=>$totalRecords,
+            "data"=>$data
+        ]);
+
     }
 }

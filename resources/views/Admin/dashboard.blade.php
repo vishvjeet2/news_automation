@@ -67,8 +67,11 @@ function toggleStatus(id) {
     .then(res => res.json())
     .then(data => {
         const btn = document.getElementById(`status-btn-${id}`);
+
         btn.innerText = data.label;
-        
+
+        if(!btn) return;
+
         let drafts = document.getElementById('stat-drafts');
         let published = document.getElementById('stat-published');
 
@@ -84,33 +87,182 @@ function toggleStatus(id) {
     });
 }
     
-$(document).ready(function(){
+$(document).ready(function () {
+
     $('#adminPostsTable').DataTable({
+
         pageLength: 5,
-        lengthChange: false, // Hides the "Show 10 entries" dropdown for cleaner mobile UI
+        lengthChange: false,
         ordering: true,
-        
-        // Disable plugins that conflict with custom CSS
-        responsive: false, 
+
+        responsive: false,
         scrollX: false,
         autoWidth: false,
 
-        // This 'dom' structure ensures the search box and pagination
-        // stack vertically on mobile and sit side-by-side on desktop
-        dom: "<'flex flex-col sm:flex-row justify-between items-center mb-4 gap-4'f>" +
-             "t" +
-             "<'flex flex-col sm:flex-row justify-between items-center mt-6 gap-4 text-sm'i'p>",
-        
-        language:{
+        serverSide: true,
+        processing: true,
+
+        ajax: {
+            url: "/admin/posts/data",
+            type: "GET"
+        },
+
+        columns: [
+
+            {
+                data: 'heading',
+                render: function (data) {
+                    return `
+                        <span class="md:hidden text-xs font-bold text-gray-400 uppercase block mb-1">
+                            Heading
+                        </span>
+
+                        <span class="font-medium text-gray-900 break-words">
+                            ${data}
+                        </span>
+                    `;
+                }
+            },
+
+            {
+                data: 'news_type',
+                render: function (data) {
+                    return `
+                        <div class="flex justify-between">
+
+                            <span class="md:hidden font-bold text-gray-600 text-xs uppercase">
+                                Type
+                            </span>
+
+                            <span class="capitalize">
+                                ${data ?? 'N/A'}
+                            </span>
+
+                        </div>
+                    `;
+                }
+            },
+
+            {
+                data: 'category',
+                render: function (data) {
+                    return `
+                        <div class="flex justify-between">
+
+                            <span class="md:hidden font-bold text-gray-600 text-xs uppercase">
+                                Category
+                            </span>
+
+                            <span>
+                                ${data ?? '-'}
+                            </span>
+
+                        </div>
+                    `;
+                }
+            },
+
+            {
+                data: 'status',
+                render: function (data) {
+                    return `
+                        <div class="flex justify-between">
+
+                            <span class="md:hidden font-bold text-gray-600 text-xs uppercase">
+                                Status
+                            </span>
+
+                            <span class="text-gray-500">
+                                ${data}
+                            </span>
+
+                        </div>
+                    `;
+                    }
+                
+            },
+
+            {
+                data: 'date',
+                render: function (data) {
+                    return `
+                        <div class="flex justify-between">
+
+                            <span class="md:hidden font-bold text-gray-600 text-xs uppercase">
+                                Date
+                            </span>
+
+                            <span class="text-gray-500">
+                                ${data}
+                            </span>
+
+                        </div>
+                    `;
+                }
+            },
+
+            {
+                data: 'action',
+                render: function (data) {
+                    return `
+                        <div class="flex justify-between">
+
+                            <span class="md:hidden font-bold text-gray-600 text-xs uppercase">
+                                Action
+                            </span>
+
+                            ${data}
+
+                        </div>
+                    `;
+                }
+            }
+
+        ],
+
+        createdRow: function (row) {
+
+            $(row).addClass(`
+                block md:table-row
+                bg-white
+                rounded-lg
+                shadow-sm
+                border
+                border-gray-200
+                mb-4
+                md:mb-0
+                md:border-none
+                md:shadow-none
+                hover:bg-gray-50
+            `);
+
+            $('td', row).addClass(`
+                block md:table-cell
+                p-4
+                border-b
+                md:border-b-0
+                border-gray-100
+            `);
+
+        },
+
+        dom:
+            "<'flex flex-col sm:flex-row justify-between items-center mb-4 gap-4'f>" +
+            "t" +
+            "<'flex flex-col sm:flex-row justify-between items-center mt-6 gap-4 text-sm'i'p>",
+
+        language: {
             search: "",
             searchPlaceholder: "Search posts...",
             info: "Showing _START_ to _END_ of _TOTAL_ posts",
             paginate: {
-                next: 'Next >',
-                previous: '< Prev'
+                next: "Next >",
+                previous: "< Prev"
             }
         }
+
     });
+
 });
 </script>
 
