@@ -127,4 +127,51 @@ public function store(Request $request)
             'label'  => ucfirst($news->status),
         ]);
     }
+
+    public function datatable(Request $request)
+    {
+        $draw   = $request->draw;
+        $start  = $request->start;
+        $length = $request->length;
+        $search = $request->input('search.value');
+
+        $query = News::query();
+
+        if ($search) {
+            $query->where('heading', 'like', "%{$search}%");
+        }
+
+        $totalRecords = News::count();
+        $filteredRecords = $query->count();
+
+        $posts = $query->skip($start)
+            ->take($length)
+            ->latest()
+            ->get();
+
+        $data = [];
+
+        foreach ($posts as $post) {
+
+            $status = ($post->status === 'processed')
+                ? '<span class="px-2.5 py-1 rounded-full text-xs font-medium border bg-green-100 text-green-800 border-green-300">Processed</span>'
+                : '<span class="px-2.5 py-1 rounded-full text-xs font-medium border bg-yellow-100 text-yellow-800 border-yellow-300">Draft</span>';
+
+            $data[] = [
+                'heading' => $post->heading,
+                'news_type' => $post->news_type ?? 'N/A',
+                'category' => $post->category ?? '-',
+                'status' => $status,
+                'date' => $post->created_at->format('d M Y'),
+                'action' => '<a href="'.route('posts.download',$post->id).'" class="font-bold text-blue-600 hover:underline">Preview</a>'
+            ];
+        }
+
+        return response()->json([
+            "draw" => intval($draw),
+            "recordsTotal" => $totalRecords,
+            "recordsFiltered" => $filteredRecords,
+            "data" => $data
+        ]);
+    }
 }

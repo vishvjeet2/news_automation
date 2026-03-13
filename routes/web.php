@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\News\NewsController;
 use App\Http\Controllers\PostController;
+use App\Services\AIassistentService;
 
 
 
@@ -78,6 +79,8 @@ Route::middleware('auth.check:user', 'no.back.history')->group(function () {
 
     Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
 
+    Route::get('/posts/data', [PostController::class, 'datatable'])->name('posts.data');
+
     Route::post('/posts/generate', [PostController::class, 'store'])->name('posts.generate');
 
     Route::patch('/posts/{news}/status', [PostController::class, 'toggleStatus'])->name('posts.toggleStatus');
@@ -88,4 +91,6 @@ Route::middleware('auth.check:user', 'no.back.history')->group(function () {
 
 
 Route::get('/', function () {return view('welcome');});
+
+Route::get('/test-gemini', [AIassistentService::class, 'testGroq']);
 
