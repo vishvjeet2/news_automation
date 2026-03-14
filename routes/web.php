@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\PostController as AdminPostController;
+use App\Http\Controllers\AIController;
 use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
@@ -97,5 +98,15 @@ Route::middleware('auth.check:user', 'no.back.history')->group(function () {
 
 Route::get('/', function () {return view('welcome');});
 
-Route::get('/test-gemini', [AIassistentService::class, 'testGroq']);
+// Route::get('/test-gemini', [AIassistentService::class, 'testGroq']);
+// Route::post('/test-gemini', [AIassistentService::class, 'testGroq']);
+
+
+    Route::post('/ai/analyze', [AIController::class, 'analyze'])
+        ->name('ai.analyze');
+
+
+
+    // Route::post('/admin/ai/analyze', [AIController::class, 'analyze'])
+    //     ->name('admin.ai.analyze');
 
