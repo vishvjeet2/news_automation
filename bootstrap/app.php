@@ -14,6 +14,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function ($middleware) {
         $middleware->alias([
         'auth.check' => \App\Http\Middleware\AuthCheck::class,
+        'admin.auth'=>  \App\Http\Middleware\AdminAuth::class,
+        'no.back.history' => \App\Http\Middleware\PreventBackHistory::class,
     ]);
     })
 

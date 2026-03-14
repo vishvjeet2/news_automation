@@ -24,7 +24,7 @@
 
         .container {
             position: relative;
-            width: 215mm;
+            width: 205mm;
             height: 260mm;
             overflow: hidden;
         }
@@ -41,20 +41,21 @@
         .content {
             position: relative;
             z-index: 10;
-            padding-top: 330px;
+            top: 40%;
             padding-left: 40px;
             padding-right: 40px;
             text-align: center;
+            /* border: 5px solid palegreen; */
         }
 
         .heading {
-            font-size: 38px;
+            font-size: 50px;
             font-weight: bold;
             color: #ffffff;
             height: 100px;
             text-align: center;
             line-height: 1.2;
-            font-family: 'Anek Devanagari';
+            font-family: 'Khand';
             text-decoration: underline;
         }
         .location {
@@ -81,24 +82,35 @@
             word-wrap: break-word;
         }
 
-        .photo {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            top: 102%;   /* 🔥 move image downward */
-            width: 400px;
-            height: 300px;
-            /* border: 5px solid #ffffff; */
-            box-sizing: border-box;
+        .photo-container{
+            position:absolute;
+            top:150%;
+            width:600px;
+            left:50%;
+            transform:translateX(-50%);
+            /* border:4px solid palegreen; */
+
+            display:grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap:10px;
         }
 
-        .photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;   /* ✅ shows full image */
-            background: transparent;   /* ✅ transparent */
+        .photo{
+            width:100%;
+            height:250px;
         }
 
+        .photo img{
+            width:100%;
+            height:100%;
+            object-fit:contain;
+        }
+
+        /* If there are exactly 3 images, make the 3rd one full width */
+        .photo-container .photo:last-child:nth-child(odd){
+            grid-column: span 2;
+        }
+        
         .top-left-text {
             position: absolute;
             top: 85px;        /* Adjust vertical position */
@@ -143,13 +155,21 @@
             {{ $heading }}
         </div>
 
-        <div class="text">
-            {{ $data }}
-        </div>
+        {{-- <div class="text">
+            {{ $description }}
+        </div> --}}
 
-        <div class="photo">
-            <img src="{{ $photoPath }}" alt="news photo">
+        @if(!empty($photoPaths))
+        <div class="photo-container">
+
+            @foreach($photoPaths as $photo)
+                <div class="photo">
+                    <img src="{{ $photo }}" alt="news photo">
+                </div>
+            @endforeach
+
         </div>
+        @endif
 
     </div>
 

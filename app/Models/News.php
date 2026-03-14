@@ -8,20 +8,27 @@ class News extends Model
 {
     protected $fillable = [
         'user_id',
+        'admin_id',
         'category_id',
         'template_id',
         'description',
         'heading',
         'hashtag',
         'place',
+        'category',
         'news_type',
         'status',
         'audio_path'
     ];
-    
+
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function admin()
+    {
+        return $this->belongsTo(Admin::class);
     }
 
     public function category()
@@ -45,7 +52,7 @@ class News extends Model
     }
 
     public function latestOutput()
-{
-    return $this->hasOne(NewsOutput::class)->latestOfMany();    
-}
+    {
+        return $this->hasOne(NewsOutput::class)->latestOfMany();
+    }
 }

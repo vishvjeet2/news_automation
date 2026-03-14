@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Login - News Automation</title>
+    <title>Admin Login - News Automation</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -20,7 +20,7 @@
             </h1>
 
             <p class="text-gray-500 mt-2 text-sm">
-                Log in to your account
+                Admin Login
             </p>
         </div>
 
@@ -30,7 +30,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('login.submit') }}" class="space-y-5 sm:space-y-6">
+        <form method="POST" action="{{ route('admin.login.submit') }}" class="space-y-5 sm:space-y-6">
             @csrf
 
             <!-- Email -->
@@ -41,7 +41,7 @@
 
                 <input type="email" name="email" required
                     class="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition"
-                    placeholder="Enter your email">
+                    placeholder="Enter admin email">
             </div>
 
             <!-- Password -->
@@ -52,13 +52,13 @@
 
                 <input type="password" name="password" required
                     class="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition"
-                    placeholder="Enter your password">
+                    placeholder="Enter password">
             </div>
 
-            <!-- Admin login -->
+            <!-- Back to user login -->
             <div class="text-left">
-                <a href="{{ route('admin.login') }}" class="text-sm text-gray-600 hover:text-black transition">
-                    Admin login
+                <a href="{{ route('login') }}" class="text-sm text-gray-600 hover:text-black transition">
+                    User login
                 </a>
             </div>
 
