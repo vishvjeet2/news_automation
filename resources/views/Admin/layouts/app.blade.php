@@ -96,6 +96,27 @@
         
                             <span class="sidebar-text">Category</span>
                         </a>
+
+                        <!--
+                        |-------------------------------------------------
+                        | Create Template Link
+                        |-------------------------------------------------
+                        -->
+        
+                        <a href="{{ route('admin.template.store') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-md transition
+                            {{ request()->routeIs('admin.template.*')
+                                ? 'bg-gray-200 text-black border-l-4 border-black'
+                                : 'text-gray-700 hover:bg-gray-100' }}">
+        
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h14a2 2 0 012 2v3a2 2 0 01-2 2H5a2 2 0 01-2-2V5z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 14a2 2 0 012-2h6a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 14a2 2 0 012-2h2a2 2 0 012 2v5a2 2 0 01-2 2h-2a2 2 0 01-2-2v-5z" />
+                            </svg>
+        
+                            <span class="sidebar-text">Add template</span>
+                        </a>
         
                     </nav>
         

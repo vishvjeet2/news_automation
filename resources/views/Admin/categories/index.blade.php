@@ -54,6 +54,7 @@
                     <tr>
                         <th class="p-4 text-sm font-medium text-gray-600">Name</th>
                         <th class="p-4 text-sm font-medium text-gray-600">Slug</th>
+                        <th class="p-4 text-sm font-medium text-gray-600">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -61,10 +62,20 @@
                         <tr class="border-b border-gray-100">
                             <td class="p-4">{{ $category->name }}</td>
                             <td class="p-4">{{ $category->slug }}</td>
+                            <td class="p-4">
+                                <form method="POST" action="{{ route('admin.categories.destroy', $category->id) }}"
+                                    onsubmit="return confirm('Delete this category?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-xs text-red-500 hover:text-red-700 transition">
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="2" class="p-6 text-center text-gray-400">
+                            <td colspan="3" class="p-6 text-center text-gray-400">
                                 No categories found
                             </td>
                         </tr>

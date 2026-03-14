@@ -49,15 +49,20 @@ Route::prefix('admin')
     Route::get('/dashboard',[AdminDashboardController::class,'index'])->name('admin.dashboard');
     
     Route::get('/dashboard/search',[AdminDashboardController::class,'search'])->name('admin.dashboard.search');
-
     Route::get('/posts/data', [AdminPostController::class,'datatable']);
-
     Route::get('/posts/create', [AdminPostController::class,'create'])->name('admin.posts.create');
     Route::post('/posts/{news}/toggle-status', [AdminPostController::class, 'toggleStatus']);
+
     Route::get('/categories',[CategoryController::class,'index'])->name('admin.categories.index');
     Route::post('/categories', [CategoryController::class, 'store'])->name('admin.categories.store');
-    Route::get('/admin/categories', [AdminPostController::class, 'index'])->name('admin.categories.index');
+    Route::post('/categories/{id}', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
+
     Route::post('/posts/generate', [AdminPostController::class, 'store'])->name('admin.post.store');
+
+    Route::get('/template', [AdminPostController::class, 'viewtemplate'])->name('admin.template.index');
+    Route::post('/template', [AdminPostController::class, 'addtemplate'])->name('admin.template.store');
+    Route::post('/template/{id}', [AdminPostController::class, 'deletetemplate'])->name('admin.template.delete');
+
     Route::get('/posts/{id}/download', [AdminDashboardController::class, 'download'])->name('admin.post.download');
 });
 

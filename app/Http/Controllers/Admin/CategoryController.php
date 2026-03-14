@@ -27,6 +27,12 @@ class CategoryController extends Controller
         return view('admin.categories.index', compact('categories'));
     }
 
+    public function destroy($id)
+    {
+        Category::findOrFail($id)->delete();
+        return redirect()->back()->with('success', 'Category deleted successfully.');
+    }
+
 
     /*
     |--------------------------------------------------------------------------

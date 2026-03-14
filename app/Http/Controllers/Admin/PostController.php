@@ -70,6 +70,51 @@ class PostController extends Controller
     |--------------------------------------------------------------------------
     */
 
+    public function viewtemplate(){
+        $templates  = Template::paginate(5);
+
+        return view('Admin.categories.template', compact('templates'));
+    }
+
+    public function addtemplate(Request $request){
+
+        $request->validate([
+            'name'          => 'required|string|max:255|unique:templates,name',
+            'template_path' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+         // Handle image upload
+        $imageName = strtolower(str_replace(' ', '_', $request->name)) . '.jpeg';
+        $request->file('template_path')->move(storage_path('app/public/templates'), $imageName);
+
+        Template::create([
+            'name'          => $request->name,
+            'template_path' => 'templates/' . $imageName,
+        ]);
+
+        return redirect()->back()->with('success', 'Template added successfully.');
+    }
+
+
+
+    public function deletetemplate($id)
+    {
+        $template = Template::findOrFail($id);
+
+        // Delete the image file from storage
+        $filePath = storage_path('app/public/' . $template->template_path);
+        
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+
+        $template->delete();
+
+        return redirect()->back()->with('success', 'Template deleted successfully.');
+    }
+
+
+
     public function download($id)
     {
         $news = News::with('latestOutput')->findOrFail($id);
