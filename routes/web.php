@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\News\NewsController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\TemplateController;
 use App\Services\AIassistentService;
 
 
@@ -53,6 +54,12 @@ Route::prefix('admin')
     Route::get('/posts/data', [AdminPostController::class,'datatable']);
     Route::get('/posts/create', [AdminPostController::class,'create'])->name('admin.posts.create');
     Route::post('/posts/{news}/toggle-status', [AdminPostController::class, 'toggleStatus']);
+    
+    
+    Route::post('/add_user', [AdminDashboardController::class, 'addUser'])->name('admin.addUser');
+    Route::get('/add_user', [AdminDashboardController::class, 'viewUser'])->name('admin.viewUser');
+
+
 
     Route::get('/categories',[CategoryController::class,'index'])->name('admin.categories.index');
     Route::post('/categories', [CategoryController::class, 'store'])->name('admin.categories.store');
@@ -105,8 +112,15 @@ Route::get('/', function () {return view('welcome');});
     Route::post('/ai/analyze', [AIController::class, 'analyze'])
         ->name('ai.analyze');
 
-
+    Route::get('/news/preview/{id}', [AdminPostController::class, 'preview'])->name('news.preview');
 
     // Route::post('/admin/ai/analyze', [AIController::class, 'analyze'])
     //     ->name('admin.ai.analyze');
 
+
+
+Route::get('/editor',function(){
+    return view('text_editor');
+});
+
+Route::post('/save-template', [TemplateController::class, 'store'])->name('save.template');

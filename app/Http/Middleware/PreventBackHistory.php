@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class PreventBackHistory
 {
@@ -16,6 +17,12 @@ class PreventBackHistory
     public function handle(Request $request, Closure $next)
     {
         $response = $next($request);
+
+        // Skip for file download responses
+        if ($response instanceof BinaryFileResponse) {
+            return $response;
+        }
+
 
         return $response->header('Cache-Control','no-cache, no-store, max-age=0, must-revalidate')
                         ->header('Pragma','no-cache')

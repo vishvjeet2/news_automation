@@ -3,10 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\News;
 use App\Models\User;
 use App\Models\NewsOutput;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UserCredentialsMail;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -76,6 +81,65 @@ class DashboardController extends Controller
         return view('news.adminpreview', [
             'image' => $publicPath
         ]);
+    }
+
+    public function addUser(Request $request)
+    {
+        $request->validate([
+            'name'     => 'required|string|max:100',
+            'email'    => 'required|email',
+            'password' => 'required|min:6',
+            'role'     => 'required'
+        ]);
+    
+        // store plain password for email
+        $plainPassword = $request->password;
+
+        $data = [
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'password' => Hash::make($request->password),
+        ];
+    
+        /*
+        |--------------------------------------------------------------------------
+        | Store Based on Role
+        |--------------------------------------------------------------------------
+        */
+    
+        if ($request->role === 'admin') {
+
+            if (Admin::where('email', $request->email)->exists()) {
+                return back()
+                    ->withErrors(['email' => 'Admin with this email already exists'])
+                    ->withInput();
+            }
+    
+            $admin = Admin::create($data);
+            Mail::to($admin->email)->send(
+                new UserCredentialsMail($admin->name, $admin->email, $plainPassword)
+            );
+    
+        } else {
+    
+            if (User::where('email', $request->email)->exists()) {
+                return back()
+                    ->withErrors(['email' => 'User with this email already exists'])
+                    ->withInput();
+            }
+    
+            $user = User::create($data);
+            Mail::to($user->email)->send(
+                new UserCredentialsMail($user->name, $user->email, $plainPassword)
+            );
+        }
+    
+        return back()->with('success', 'User created successfully');
+    }
+
+    public function viewUser(){
+
+        return view('Admin.adduser');
     }
 
 }

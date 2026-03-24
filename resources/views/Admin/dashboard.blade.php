@@ -1,9 +1,20 @@
 @extends('Admin.layouts.app')
 
-@section('title', 'Admin Dashboard')
+
 
 @section('content')
+<div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
 
+    <!-- Left: Title -->
+    <h1 class="text-2xl font-semibold">Admin Dashboard</h1>
+
+    <!-- Right: Add User Button -->
+    <a href="{{ route('admin.viewUser') }}"
+        class="mt-3 md:mt-0 inline-block bg-black text-white px-5 py-2.5 rounded-md shadow hover:bg-gray-800 transition">
+        + Add User
+    </a>
+
+</div>
 <!-- DataTables CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.tailwindcss.min.css">
 

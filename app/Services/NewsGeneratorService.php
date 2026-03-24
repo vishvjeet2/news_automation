@@ -10,6 +10,8 @@ use App\Models\NewsMedia;
 use App\Models\Template;
 use Spatie\Browsershot\Browsershot;
 use Symfony\Component\Process\Process;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -100,46 +102,77 @@ class NewsGeneratorService
 
     protected function generateImage(Request $request)
     {
+        /*
+        |--------------------------------------------------------------------------
+        | Validate Request
+        |--------------------------------------------------------------------------
+        | image is an array → multiple file upload
+        */
         $request->validate([
             'heading' => 'required|string|max:200',
-            'city' => 'required|string|max:15',
-            'image' => 'nullable|array',
-            'image.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+            'city'    => 'required|string|max:15',
+            'image'   => 'nullable|array',
+            'image.*' => 'image|mimes:jpg,jpeg,png,webp|max:20480',
         ]);
 
-        $heading      = $request->heading;
-        $description  = $request->description;
-        $location     = $request->city;
-        $hashtag      = $request->hashtag;
-        $category_id  = $request->category_id;
+        /*
+        |--------------------------------------------------------------------------
+        | Basic Data
+        |--------------------------------------------------------------------------
+        */
+        $heading     = $request->heading;
+        $description = $request->description;
+        $location    = $request->city;
+        $hashtag     = $request->hashtag;
+        $category_id = $request->category_id;
 
-        $catogry_name = Category::where('id', $category_id)->value('name');
+        $category_name = Category::where('id', $category_id)->value('name');
 
-        $photoPaths = [];
-        $storedFiles = [];
+        /*
+        |--------------------------------------------------------------------------
+        | Handle Image Upload (FIXED ERROR HERE)
+        |--------------------------------------------------------------------------
+        | Loop because image is an array
+        */
+        $photoPaths  = [];   // for base64 (HTML use)
+        $storedFiles = [];   // for DB
 
         if ($request->hasFile('image')) {
-
             foreach ($request->file('image') as $file) {
 
+                // store file in storage/app/public/temp
                 $stored = $file->store('temp', 'public');
+
+                // get full path
+                $fullPath = storage_path('app/public/' . $stored);
+
+                // save for DB
                 $storedFiles[] = [
-                    'path' => $stored,
+                    'path'      => $stored,
                     'extension' => $file->extension()
                 ];
 
-                $photoFullPath = storage_path('app/public/' . $stored);
-
+                // convert to base64 for image rendering
                 $photoPaths[] = 'data:image/jpeg;base64,' .
-                    base64_encode(file_get_contents($photoFullPath));
+                    base64_encode(file_get_contents($fullPath));
             }
         }
 
-        $templatePath = Template::where('id', $request->template_type)
-                        ->value('template_path');
+        /*
+        |--------------------------------------------------------------------------
+        | Load Template Image
+        |--------------------------------------------------------------------------
+        */
+        $templatePath = storage_path('app/public/templates/news_frame.jpeg');
 
-        $template = storage_path('app/public/' . $templatePath);
+        $template = 'data:image/jpeg;base64,' .
+            base64_encode(file_get_contents($templatePath));
 
+        /*
+        |--------------------------------------------------------------------------
+        | Render HTML
+        |--------------------------------------------------------------------------
+        */
         $html = view('news.newsimage', compact(
             'description',
             'heading',
@@ -149,63 +182,95 @@ class NewsGeneratorService
             'hashtag'
         ))->render();
 
+        /*
+        |--------------------------------------------------------------------------
+        | Prepare Storage
+        |--------------------------------------------------------------------------
+        */
         $directory = storage_path('app/public/images');
 
         if (!file_exists($directory)) {
             mkdir($directory, 0755, true);
         }
 
-        $filename = 'news_' . time() . '.png';
+        $filename     = 'news_' . time() . '.png';
         $absolutePath = $directory . '/' . $filename;
-
-        Browsershot::html($html)
-            ->windowSize(800,1000)
-            ->save($absolutePath);
-
-        $newsData = [
-            'category_id' => $category_id,
-            'template_id' => $request->template_type,
-            'description' => $description,
-            'heading' => $heading,
-            'hashtag' => $hashtag,
-            'place' => $location,
-            'category' => $catogry_name,
-            'news_type' => 'image',
-            'status' => 'draft'
-        ];
-
-        $this->assignOwnership($newsData);
-
-        $news = News::create($newsData);
-
         $relativePath = 'images/' . $filename;
 
-        NewsOutput::create([
-            'news_id' => $news->id,
-            'output_type' => 'image',
-            'file_path' => $relativePath,
+        /*
+        |--------------------------------------------------------------------------
+        | Generate Image using Browsershot
+        |--------------------------------------------------------------------------
+        */
+        try {
+            Browsershot::html($html)
+                ->windowSize(800, 1000)
+                ->save($absolutePath);
+
+        } catch (\Exception $e) {
+            \Log::error('Browsershot failed', [
+                'message' => $e->getMessage()
+            ]);
+
+            abort(500, 'Image generation failed');
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Save News
+        |--------------------------------------------------------------------------
+        */
+        $news = News::create([
+            'category_id' => $category_id,
+            'user_id'     => session('user_id'),
+            'template_id' => $request->template_type,
+            'description' => $description,
+            'heading'     => $heading,
+            'hashtag'     => $hashtag,
+            'place'       => $location,
+            'category'    => $category_name,
         ]);
 
-        /* store multiple media */
-        foreach ($storedFiles as $file) {
+        /*
+        |--------------------------------------------------------------------------
+        | Save Output Image
+        |--------------------------------------------------------------------------
+        */
+        NewsOutput::create([
+            'news_id'     => $news->id,
+            'output_type' => 'image',
+            'file_path'   => $relativePath,
+            'is_primary'  => 1
+        ]);
 
+        /*
+        |--------------------------------------------------------------------------
+        | Save Uploaded Media (MULTIPLE FILES)
+        |--------------------------------------------------------------------------
+        */
+        foreach ($storedFiles as $file) {
             NewsMedia::create([
-                'news_id' => $news->id,
+                'news_id'   => $news->id,
                 'file_path' => $file['path'],
                 'file_type' => $file['extension']
             ]);
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | Return View
+        |--------------------------------------------------------------------------
+        */
         return view('news.download', [
-            'image' => asset('storage/' . $relativePath),
-            // 'newsID' => $news->id
+            'image'  => asset('storage/' . $relativePath),
+            'newsID' => $news->id
         ]);
     }
 
     /*
     |--------------------------------------------------------------------------
     | Video Generation
-    |--------------------------------------------------------------------------
+    |---------------------------x-----------------------------------------------
     |
     | Previously inside createvideo() controller method.
     |

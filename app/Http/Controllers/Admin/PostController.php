@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Template;
 use App\Models\News;
+use App\Models\NewsMedia;
 use Illuminate\Http\Request;
 use App\Services\NewsGeneratorService;
 use Illuminate\Support\Facades\DB;
@@ -213,5 +214,42 @@ class PostController extends Controller
             "data"=>$data
         ]);
 
+    }
+
+    public function preview($id)
+    {
+        // Get news data
+        $news = News::findOrFail($id);
+
+        // Get template data
+        $template = Template::find($news->template_id);
+
+        $templatePath = Template::where('id', $template)
+            ->value('template_path');
+
+        // Get uploaded images if any
+        $photos = NewsMedia::where('news_id', $news->id)->pluck('file_path')->toArray();
+
+        $photoPaths = [];
+
+        foreach ($photos as $photo) {
+            $photoPaths[] = storage_path('app/public/' . $photo);
+        }
+
+        $heading = $news->heading;
+        $description = $news->description;
+        $location = $news->place;
+        $hashtag = $news->hashtag;
+        $template = storage_path('app/public/' . $templatePath);
+       
+
+        return view('news.newsimage', compact(
+            'description',
+            'heading',
+            'template',
+            'photoPaths',
+            'location',
+            'hashtag'
+        ))->render();
     }
 }

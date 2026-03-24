@@ -9,7 +9,7 @@
                     <th class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Category</th>
                     <th class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
                     <th class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Created</th>
-                    <th class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Download</th>
+                    <th class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Preview</th>
                 </tr>
             </thead>
             
