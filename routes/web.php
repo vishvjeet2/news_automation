@@ -8,6 +8,7 @@ use App\Http\Controllers\AIController;
 use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EditorController;
 use App\Http\Controllers\News\NewsController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TemplateController;
@@ -103,7 +104,7 @@ Route::middleware('auth.check:user', 'no.back.history')->group(function () {
 });
 
 
-Route::get('/', function () {return view('welcome');});
+// Route::get('/', function () {return view('welcome');});
 
 // Route::get('/test-gemini', [AIassistentService::class, 'testGroq']);
 // Route::post('/test-gemini', [AIassistentService::class, 'testGroq']);
@@ -118,9 +119,15 @@ Route::get('/', function () {return view('welcome');});
     //     ->name('admin.ai.analyze');
 
 
+// Editor Routes
 
-Route::get('/editor',function(){
-    return view('text_editor');
-});
+Route::get('/', [EditorController::class, 'list'])->name('home');
+Route::get('/editor', [EditorController::class, 'index'])->name('editor.index');
+Route::get('/editor/{design}', [EditorController::class, 'edit'])->name('editor.edit');
+Route::get('/designs', [EditorController::class, 'list'])->name('designs.list');
 
-Route::post('/save-template', [TemplateController::class, 'store'])->name('save.template');
+Route::post('/editor/save', [EditorController::class, 'save'])->name('editor.save');
+Route::post('/editor/upload-image', [EditorController::class, 'uploadImage'])->name('editor.upload-image');
+Route::delete('/editor/image/{image}', [EditorController::class, 'deleteImage'])->name('editor.delete-image');
+Route::delete('/editor/design/{design}', [EditorController::class, 'delete'])->name('editor.delete');
+Route::post('/editor/export', [EditorController::class, 'export'])->name('editor.export');
