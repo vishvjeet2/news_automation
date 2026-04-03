@@ -18,7 +18,7 @@ class EditorController extends Controller
     public function list()
     {
         $designs = Design::orderBy('updated_at', 'desc')->paginate(12);
-        return view('editor.list', compact('designs'));
+        return view('Editor.list', compact('designs'));
     }
 
     /**
@@ -29,7 +29,7 @@ class EditorController extends Controller
         $uploadedImages = UploadedImage::orderBy('created_at', 'desc')->get();
         $fonts = $this->getAvailableFonts();
         
-        return view('editor.index', [
+        return view('Editor.index', [
             'design' => null,
             'uploadedImages' => $uploadedImages,
             'fonts' => $fonts
@@ -45,7 +45,7 @@ class EditorController extends Controller
         $templets = Template::all();
         $fonts = $this->getAvailableFonts();
         
-        return view('editor.index', [
+        return view('Editor.index', [
             'templates' => $templets,
             'design' => $design,
             'uploadedImages' => $uploadedImages,

@@ -13,9 +13,7 @@ use App\Http\Controllers\News\NewsController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TemplateController;
 use App\Services\AIassistentService;
-
-
-
+use FontLib\Table\Type\name;
 
 /*
 |------------------------------------------------------------------------
@@ -104,7 +102,7 @@ Route::middleware('auth.check:user', 'no.back.history')->group(function () {
 });
 
 
-// Route::get('/', function () {return view('welcome');});
+Route::get('/', function () {return view('welcome');});
 
 // Route::get('/test-gemini', [AIassistentService::class, 'testGroq']);
 // Route::post('/test-gemini', [AIassistentService::class, 'testGroq']);
@@ -121,7 +119,7 @@ Route::middleware('auth.check:user', 'no.back.history')->group(function () {
 
 // Editor Routes
 
-Route::get('/', [EditorController::class, 'list'])->name('home');
+Route::get('/edit', [EditorController::class, 'list'])->name('edit');
 Route::get('/editor', [EditorController::class, 'index'])->name('editor.index');
 Route::get('/editor/{design}', [EditorController::class, 'edit'])->name('editor.edit');
 Route::get('/designs', [EditorController::class, 'list'])->name('designs.list');

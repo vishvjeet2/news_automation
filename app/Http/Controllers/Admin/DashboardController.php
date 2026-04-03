@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserCredentialsMail;
 use Illuminate\Support\Facades\DB;
+use App\Jobs\SendEmailJob;
 
 class DashboardController extends Controller
 {
@@ -115,10 +116,10 @@ class DashboardController extends Controller
                     ->withInput();
             }
     
-            $admin = Admin::create($data);
-            Mail::to($admin->email)->send(
-                new UserCredentialsMail($admin->name, $admin->email, $plainPassword)
-            );
+            $user = Admin::create($data);
+
+            // push job to queue
+            SendEmailJob::dispatch($user);
     
         } else {
     
@@ -129,9 +130,8 @@ class DashboardController extends Controller
             }
     
             $user = User::create($data);
-            Mail::to($user->email)->send(
-                new UserCredentialsMail($user->name, $user->email, $plainPassword)
-            );
+            // push job to queue
+            SendEmailJob::dispatch($user);
         }
     
         return back()->with('success', 'User created successfully');
